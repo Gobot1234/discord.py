@@ -91,7 +91,7 @@ class AuditLogDiff:
         return iter(self.__dict__.items())
 
     def __repr__(self):
-        values = ' '.join('%s=%r' % item for item in self.__dict__.items())
+        values = ' '.join(f'{item}={item}' for item in self.__dict__.items())
         return f'<AuditLogDiff {values}>'
 
 class AuditLogChanges:
@@ -305,7 +305,7 @@ class AuditLogEntry(Hashable):
     @utils.cached_property
     def target(self):
         try:
-            converter = getattr(self, '_convert_target_' + self.action.target_type)
+            converter = getattr(self, f'_convert_target_{self.action.target_type}')
         except AttributeError:
             return Object(id=self._target_id)
         else:

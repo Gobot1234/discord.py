@@ -202,7 +202,7 @@ class Activity(BaseActivity):
             ('session_id', self.session_id),
             ('emoji', self.emoji),
         )
-        inner = ' '.join('%s=%r' % t for t in attrs)
+        inner = ' '.join(f'{t}={t}' for t in attrs)
         return f'<Activity {inner}>'
 
     def to_dict(self):
@@ -248,7 +248,7 @@ class Activity(BaseActivity):
         except KeyError:
             return None
         else:
-            return Asset.BASE + f'/app-assets/{self.application_id}/{large_image}.png'
+            return f'{Asset.BASE}/app-assets/{self.application_id}/{large_image}.png'
 
     @property
     def small_image_url(self):
@@ -261,7 +261,7 @@ class Activity(BaseActivity):
         except KeyError:
             return None
         else:
-            return Asset.BASE + f'/app-assets/{self.application_id}/{small_image}.png'
+            return f'{Asset.BASE}/app-assets/{self.application_id}/{small_image}.png'
     @property
     def large_image_text(self):
         """Optional[:class:`str`]: Returns the large image asset hover text of this activity if applicable."""
@@ -330,9 +330,9 @@ class Game(BaseActivity):
         try:
             dt = data[key]
         except KeyError:
-            setattr(self, '_' + key, 0)
+            setattr(self, f'_{key}', 0)
         else:
-            setattr(self, '_' + key, dt.timestamp() * 1000.0)
+            setattr(self, f'_{key}', dt.timestamp() * 1000.0)
 
     @property
     def type(self):
@@ -622,7 +622,7 @@ class Spotify:
         if large_image[:8] != 'spotify:':
             return ''
         album_image_id = large_image[8:]
-        return 'https://i.scdn.co/image/' + album_image_id
+        return f'https://i.scdn.co/image/{album_image_id}'
 
     @property
     def track_id(self):

@@ -113,7 +113,7 @@ class TextChannel(discord.abc.Messageable, discord.abc.GuildChannel, Hashable):
             ('news', self.is_news()),
             ('category_id', self.category_id)
         ]
-        joined = ' '.join('%s=%r' % t for t in attrs)
+        joined = ' '.join(f'{t}={t}' for t in attrs)
         return f'<{self.__class__.__name__} {joined}>'
 
     def _update(self, guild, data):
@@ -320,7 +320,7 @@ class TextChannel(discord.abc.Messageable, discord.abc.GuildChannel, Hashable):
                 return m.author == client.user
 
             deleted = await channel.purge(limit=100, check=is_me)
-            await channel.send('Deleted {} message(s)'.format(len(deleted)))
+            await channel.send(f'Deleted {len(deleted)} message(s)')
 
         Parameters
         -----------
@@ -504,7 +504,7 @@ class TextChannel(discord.abc.Messageable, discord.abc.GuildChannel, Hashable):
             raise ClientException('The channel must be a news channel.')
 
         if not isinstance(destination, TextChannel):
-            raise InvalidArgument('Expected TextChannel received {0.__name__}'.format(type(destination)))
+            raise InvalidArgument(f'Expected TextChannel received {type(destination).__name__}')
 
         from .webhook import Webhook
         data = await self._state.http.follow_webhook(self.id, webhook_channel_id=destination.id, reason=reason)
@@ -662,7 +662,7 @@ class VoiceChannel(VocalGuildChannel):
             ('user_limit', self.user_limit),
             ('category_id', self.category_id)
         ]
-        joined = ' '.join('%s=%r' % t for t in attrs)
+        joined = ' '.join(f'{t}={t}' for t in attrs)
         return f'<{self.__class__.__name__} {joined}>'
 
     @property
@@ -786,7 +786,7 @@ class StageChannel(VocalGuildChannel):
             ('user_limit', self.user_limit),
             ('category_id', self.category_id)
         ]
-        joined = ' '.join('%s=%r' % t for t in attrs)
+        joined = ' '.join(f'{t}={t}' for t in attrs)
         return f'<{self.__class__.__name__} {joined}>'
 
     def _update(self, guild, data):

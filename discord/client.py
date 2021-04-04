@@ -66,7 +66,7 @@ def _cancel_tasks(loop):
     if not tasks:
         return
 
-    log.info('Cleaning up after %d tasks.', len(tasks))
+    log.info(f'Cleaning up after {len(tasks)} tasks.')
     for task in tasks:
         task.cancel()
 
@@ -334,8 +334,8 @@ class Client:
         return asyncio.create_task(wrapped, name=f'discord.py: {event_name}')
 
     def dispatch(self, event, *args, **kwargs):
-        log.debug('Dispatching event %s', event)
-        method = 'on_' + event
+        log.debug(f'Dispatching event {event}')
+        method = f'on_{event}'
 
         listeners = self._listeners.get(event)
         if listeners:
@@ -538,7 +538,7 @@ class Client:
                 while True:
                     await self.ws.poll_event()
             except ReconnectWebSocket as e:
-                log.info('Got a request to %s the websocket.', e.op)
+                log.info(f'Got a request to {e.op} the websocket.')
                 self.dispatch('disconnect')
                 ws_params.update(sequence=self.ws.sequence, resume=e.resume, session=self.ws.session_id)
                 continue
@@ -577,7 +577,7 @@ class Client:
                         raise
 
                 retry = backoff.delay()
-                log.exception("Attempting a reconnect in %.2fs", retry)
+                log.exception(f"Attempting a reconnect in {retry:.2f}s", )
                 await asyncio.sleep(retry)
                 # Always try to RESUME the connection
                 # If the connection is not RESUME-able then the gateway will invalidate the session.
@@ -890,7 +890,7 @@ class Client:
                         return m.content == 'hello' and m.channel == channel
 
                     msg = await client.wait_for('message', check=check)
-                    await channel.send('Hello {.author}!'.format(msg))
+                    await channel.send(f'Hello {msg.author}!')
 
         Waiting for a thumbs up reaction from the message author: ::
 
@@ -980,7 +980,7 @@ class Client:
             raise TypeError('event registered must be a coroutine function')
 
         setattr(self, coro.__name__, coro)
-        log.debug('%s has successfully been registered as an event', coro.__name__)
+        log.debug(f'{coro.__name__} has successfully been registered as an event')
         return coro
 
     async def change_presence(self, *, activity=None, status=None, afk=False):

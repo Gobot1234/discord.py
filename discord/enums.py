@@ -48,7 +48,7 @@ __all__ = (
 )
 
 def _create_value_cls(name):
-    cls = namedtuple('_EnumValue_' + name, 'name value')
+    cls = namedtuple(f'_EnumValue_{name}', 'name value')
     cls.__repr__ = lambda self: f'<{name}.{self.name}: {self.value!r}>'
     cls.__str__ = lambda self: f'{name}.{self.name}'
     return cls
