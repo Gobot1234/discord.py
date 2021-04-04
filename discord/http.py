@@ -54,7 +54,7 @@ class Route:
     def __init__(self, method, path, **parameters):
         self.path = path
         self.method = method
-        url = (self.BASE + self.path)
+        url = f'{self.BASE}{self.path}'
         if parameters:
             self.url = url.format(**{k: _uriquote(v) if isinstance(v, str) else v for k, v in parameters.items()})
         else:
@@ -67,7 +67,7 @@ class Route:
     @property
     def bucket(self):
         # the bucket is just method + path w/ major parameters
-        return '{0.channel_id}:{0.guild_id}:{0.path}'.format(self)
+        return f'{self.channel_id}:{self.guild_id}:{self.path}'
 
 class MaybeUnlock:
     def __init__(self, lock):
@@ -198,7 +198,7 @@ class HTTPClient:
                         if remaining == '0' and r.status != 429:
                             # we've depleted our current bucket
                             delta = utils._parse_ratelimit_header(r, use_clock=self.use_clock)
-                            log.debug('A rate limit bucket has been exhausted (bucket: %s, retry: %s).', bucket, delta)
+                            log.debug(f'A rate limit bucket has been exhausted (bucket: {bucket}, retry: {delta}).')
                             maybe_lock.defer()
                             self.loop.call_later(delta, lock.release)
 
@@ -480,7 +480,7 @@ class HTTPClient:
         r = Route('DELETE', '/guilds/{guild_id}/members/{user_id}', guild_id=guild_id, user_id=user_id)
         if reason:
             # thanks aiohttp
-            r.url = '{0.url}?reason={1}'.format(r, _uriquote(reason))
+            r.url = f'{r.url}?reason={_uriquote(reason)}'
 
         return self.request(r)
 
@@ -492,7 +492,7 @@ class HTTPClient:
 
         if reason:
             # thanks aiohttp
-            r.url = '{0.url}?reason={1}'.format(r, _uriquote(reason))
+            r.url = f'{r.url}?reason={_uriquote(reason)}'
 
         return self.request(r, params=params)
 
@@ -905,11 +905,8 @@ class HTTPClient:
             data = await self.request(Route('GET', '/gateway'))
         except HTTPException as exc:
             raise GatewayNotFound() from exc
-        if zlib:
-            value = '{0}?encoding={1}&v={2}&compress=zlib-stream'
-        else:
-            value = '{0}?encoding={1}&v={2}'
-        return value.format(data['url'], encoding, v)
+
+        return f'{data["url"]}?{encoding=}&{v=}&{"compress=zlib-stream" if zlib else ""}'
 
     async def get_bot_gateway(self, *, encoding='json', v=6, zlib=True):
         try:
@@ -917,11 +914,7 @@ class HTTPClient:
         except HTTPException as exc:
             raise GatewayNotFound() from exc
 
-        if zlib:
-            value = '{0}?encoding={1}&v={2}&compress=zlib-stream'
-        else:
-            value = '{0}?encoding={1}&v={2}'
-        return data['shards'], value.format(data['url'], encoding, v)
+        return data['shards'], f'{data["url"]}?{encoding=}&{v=}&{"compress=zlib-stream" if zlib else ""}'
 
     def get_user(self, user_id):
         return self.request(Route('GET', '/users/{user_id}', user_id=user_id))

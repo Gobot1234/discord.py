@@ -113,7 +113,7 @@ class TextChannel(discord.abc.Messageable, discord.abc.GuildChannel, Hashable):
             ('news', self.is_news()),
             ('category_id', self.category_id)
         ]
-        joined = ' '.join(f'{t}={t}' for t in attrs)
+        joined = ' '.join(f'{t}={t!r}' for t in attrs)
         return f'<{self.__class__.__name__} {joined}>'
 
     def _update(self, guild, data):
@@ -662,7 +662,7 @@ class VoiceChannel(VocalGuildChannel):
             ('user_limit', self.user_limit),
             ('category_id', self.category_id)
         ]
-        joined = ' '.join(f'{t}={t}' for t in attrs)
+        joined = ' '.join(f'{t}={t!r}' for t in attrs)
         return f'<{self.__class__.__name__} {joined}>'
 
     @property
@@ -786,7 +786,7 @@ class StageChannel(VocalGuildChannel):
             ('user_limit', self.user_limit),
             ('category_id', self.category_id)
         ]
-        joined = ' '.join(f'{t}={t}' for t in attrs)
+        joined = ' '.join(f'{t}={t!r}' for t in attrs)
         return f'<{self.__class__.__name__} {joined}>'
 
     def _update(self, guild, data):
@@ -896,7 +896,7 @@ class CategoryChannel(discord.abc.GuildChannel, Hashable):
         self._update(guild, data)
 
     def __repr__(self):
-        return '<CategoryChannel id={0.id} name={0.name!r} position={0.position} nsfw={0.nsfw}>'.format(self)
+        return f'<CategoryChannel id={self.id} name={self.name!r} position={self.position} nsfw={self.nsfw}>'
 
     def _update(self, guild, data):
         self.guild = guild
@@ -1092,7 +1092,7 @@ class StoreChannel(discord.abc.GuildChannel, Hashable):
         self._update(guild, data)
 
     def __repr__(self):
-        return '<StoreChannel id={0.id} name={0.name!r} position={0.position} nsfw={0.nsfw}>'.format(self)
+        return f'<StoreChannel id={self.id} name={self.name!r} position={self.position} nsfw={self.nsfw}>'
 
     def _update(self, guild, data):
         self.guild = guild
@@ -1218,7 +1218,7 @@ class DMChannel(discord.abc.Messageable, Hashable):
         return f'Direct Message with {self.recipient}'
 
     def __repr__(self):
-        return '<DMChannel id={0.id} recipient={0.recipient!r}>'.format(self)
+        return f'<DMChannel id={self.id} recipient={self.recipient!r}>'
 
     @property
     def type(self):
@@ -1354,7 +1354,7 @@ class GroupChannel(discord.abc.Messageable, Hashable):
         return ', '.join(map(lambda x: x.name, self.recipients))
 
     def __repr__(self):
-        return '<GroupChannel id={0.id} name={0.name!r}>'.format(self)
+        return f'<GroupChannel id={self.id} name={self.name!r}>'
 
     @property
     def type(self):

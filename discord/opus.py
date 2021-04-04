@@ -86,7 +86,7 @@ signal_ctl = {
 
 def _err_lt(result, func, args):
     if result < OK:
-        log.info('error has happened in %s', func.__name__)
+        log.info(f'error has happened in {func.__name_}')
         raise OpusError(result)
     return result
 

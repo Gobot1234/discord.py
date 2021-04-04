@@ -202,7 +202,7 @@ class Activity(BaseActivity):
             ('session_id', self.session_id),
             ('emoji', self.emoji),
         )
-        inner = ' '.join(f'{t}={t}' for t in attrs)
+        inner = ' '.join(f'{t}={t!r}' for t in attrs)
         return f'<Activity {inner}>'
 
     def to_dict(self):

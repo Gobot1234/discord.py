@@ -111,7 +111,7 @@ class Emoji(_EmojiTag):
         return f"<:{self.name}:{self.id}>"
 
     def __repr__(self):
-        return '<Emoji id={0.id} name={0.name!r} animated={0.animated} managed={0.managed}>'.format(self)
+        return f'<Emoji id={self.id} name={self.name!r} animated={self.animated} managed={self.managed}>'
 
     def __eq__(self, other):
         return isinstance(other, _EmojiTag) and self.id == other.id

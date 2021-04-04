@@ -355,9 +355,9 @@ class Invite(Hashable):
         return self.url
 
     def __repr__(self):
-        return '<Invite code={0.code!r} guild={0.guild!r} ' \
-                'online={0.approximate_presence_count} ' \
-                'members={0.approximate_member_count}>'.format(self)
+        return f'<Invite code={self.code!r} guild={self.guild!r} ' \
+               f'online={self.approximate_presence_count} ' \
+               f'members={self.approximate_member_count}>'
 
     def __hash__(self):
         return hash(self.code)
@@ -370,7 +370,7 @@ class Invite(Hashable):
     @property
     def url(self):
         """:class:`str`: A property that retrieves the invite URL."""
-        return self.BASE + '/' + self.code
+        return f'{self.BASE}/{self.code}'
 
     async def delete(self, *, reason=None):
         """|coro|

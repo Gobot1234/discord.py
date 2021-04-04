@@ -91,7 +91,7 @@ class AuditLogDiff:
         return iter(self.__dict__.items())
 
     def __repr__(self):
-        values = ' '.join(f'{item}={item}' for item in self.__dict__.items())
+        values = ' '.join(f'{item}={item!r}' for item in self.__dict__.items())
         return f'<AuditLogDiff {values}>'
 
 class AuditLogChanges:
