@@ -159,7 +159,8 @@ class _Overwrites:
         }
 
 
-class GuildChannel(Protocol):
+@runtime_checkable
+class GuildChannel(Snowflake, Protocol):
     """An ABC that details the common operations on a Discord guild channel.
 
     The following implement this ABC:
@@ -169,11 +170,6 @@ class GuildChannel(Protocol):
     - :class:`~discord.CategoryChannel`
 
     This ABC must also implement :class:`~discord.abc.Snowflake`.
-
-    Note
-    ----
-    This ABC is not decorated with :func:`typing.runtime_checkable`, so will fail :func:`isinstance`/:func:`issubclass`
-    checks.
 
     Attributes
     -----------
@@ -893,7 +889,8 @@ class GuildChannel(Protocol):
         return result
 
 
-class Messageable(Protocol):
+@runtime_checkable
+class Messageable(Snowflake, Protocol):
     """An ABC that details the common operations on a model that can send messages.
 
     The following implement this ABC:
@@ -904,12 +901,6 @@ class Messageable(Protocol):
     - :class:`~discord.User`
     - :class:`~discord.Member`
     - :class:`~discord.ext.commands.Context`
-
-
-    Note
-    ----
-    This ABC is not decorated with :func:`typing.runtime_checkable`, so will fail :func:`isinstance`/:func:`issubclass`
-    checks.
     """
 
     __slots__ = ()
@@ -1204,6 +1195,7 @@ class Messageable(Protocol):
         return HistoryIterator(self, limit=limit, before=before, after=after, around=around, oldest_first=oldest_first)
 
 
+@runtime_checkable
 class Connectable(Protocol):
     """An ABC that details the common operations on a channel that can
     connect to a voice server.
@@ -1211,11 +1203,6 @@ class Connectable(Protocol):
     The following implement this ABC:
 
     - :class:`~discord.VoiceChannel`
-
-    Note
-    ----
-    This ABC is not decorated with :func:`typing.runtime_checkable`, so will fail :func:`isinstance`/:func:`issubclass`
-    checks.
     """
     __slots__ = ()
 
