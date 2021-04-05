@@ -25,11 +25,11 @@ DEALINGS IN THE SOFTWARE.
 from .enums import UserFlags
 
 __all__ = (
-    "SystemChannelFlags",
-    "MessageFlags",
-    "PublicUserFlags",
-    "Intents",
-    "MemberCacheFlags",
+    'SystemChannelFlags',
+    'MessageFlags',
+    'PublicUserFlags',
+    'Intents',
+    'MemberCacheFlags',
 )
 
 
@@ -47,7 +47,7 @@ class flag_value:
         instance._set_flag(self.flag, value)
 
     def __repr__(self):
-        return f"<flag_value flag={self.flag!r}>"
+        return f'<flag_value flag={self.flag!r}>'
 
 
 class alias_flag_value(flag_value):
@@ -71,13 +71,13 @@ def fill_with_flags(*, inverted=False):
 
 # n.b. flags must inherit from this and use the decorator above
 class BaseFlags:
-    __slots__ = ("value",)
+    __slots__ = ('value',)
 
     def __init__(self, **kwargs):
         self.value = self.DEFAULT_VALUE
         for key, value in kwargs.items():
             if key not in self.VALID_FLAGS:
-                raise TypeError(f"{key!r} is not a valid flag name.")
+                raise TypeError(f'{key!r} is not a valid flag name.')
             setattr(self, key, value)
 
     @classmethod
@@ -96,7 +96,7 @@ class BaseFlags:
         return hash(self.value)
 
     def __repr__(self):
-        return f"<{self.__class__.__name__} value={self.value}>"
+        return f'<{self.__class__.__name__} value={self.value}>'
 
     def __iter__(self):
         for name, value in self.__class__.__dict__.items():
@@ -115,7 +115,7 @@ class BaseFlags:
         elif toggle is False:
             self.value &= ~o
         else:
-            raise TypeError(f"Value to set for {self.__class__.__name__} must be a bool.")
+            raise TypeError(f'Value to set for {self.__class__.__name__} must be a bool.')
 
 
 @fill_with_flags(inverted=True)
@@ -168,7 +168,7 @@ class SystemChannelFlags(BaseFlags):
         elif toggle is False:
             self.value |= o
         else:
-            raise TypeError("Value to set for SystemChannelFlags must be a bool.")
+            raise TypeError('Value to set for SystemChannelFlags must be a bool.')
 
     @flag_value
     def join_notifications(self):
@@ -400,7 +400,7 @@ class Intents(BaseFlags):
         self.value = self.DEFAULT_VALUE
         for key, value in kwargs.items():
             if key not in self.VALID_FLAGS:
-                raise TypeError(f"{key!r} is not a valid flag name.")
+                raise TypeError(f'{key!r} is not a valid flag name.')
             setattr(self, key, value)
 
     @classmethod
@@ -834,7 +834,7 @@ class MemberCacheFlags(BaseFlags):
         self.value = (1 << bits) - 1
         for key, value in kwargs.items():
             if key not in self.VALID_FLAGS:
-                raise TypeError(f"{key!r} is not a valid flag name.")
+                raise TypeError(f'{key!r} is not a valid flag name.')
             setattr(self, key, value)
 
     @classmethod
@@ -920,18 +920,18 @@ class MemberCacheFlags(BaseFlags):
 
     def _verify_intents(self, intents):
         if self.online and not intents.presences:
-            raise ValueError("MemberCacheFlags.online requires Intents.presences enabled")
+            raise ValueError('MemberCacheFlags.online requires Intents.presences enabled')
 
         if self.voice and not intents.voice_states:
-            raise ValueError("MemberCacheFlags.voice requires Intents.voice_states")
+            raise ValueError('MemberCacheFlags.voice requires Intents.voice_states')
 
         if self.joined and not intents.members:
-            raise ValueError("MemberCacheFlags.joined requires Intents.members")
+            raise ValueError('MemberCacheFlags.joined requires Intents.members')
 
         if not self.joined and self.voice and self.online:
             msg = (
-                "Setting both MemberCacheFlags.voice and MemberCacheFlags.online requires MemberCacheFlags.joined "
-                "to properly evict members from the cache."
+                'Setting both MemberCacheFlags.voice and MemberCacheFlags.online requires MemberCacheFlags.joined '
+                'to properly evict members from the cache.'
             )
             raise ValueError(msg)
 

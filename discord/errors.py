@@ -53,22 +53,22 @@ class GatewayNotFound(DiscordException):
     for the :class:`Client` websocket is not found."""
 
     def __init__(self):
-        message = "The gateway to connect to discord was not found."
+        message = 'The gateway to connect to discord was not found.'
         super().__init__(message)
 
 
-def flatten_error_dict(d, key=""):
+def flatten_error_dict(d, key=''):
     items = []
     for k, v in d.items():
-        new_key = key + "." + k if key else k
+        new_key = key + '.' + k if key else k
 
         if isinstance(v, dict):
             try:
-                _errors = v["_errors"]
+                _errors = v['_errors']
             except KeyError:
                 items.extend(flatten_error_dict(v, new_key).items())
             else:
-                items.append((new_key, " ".join(x.get("message", "") for x in _errors)))
+                items.append((new_key, ' '.join(x.get('message', '') for x in _errors)))
         else:
             items.append((new_key, v))
 
@@ -97,22 +97,22 @@ class HTTPException(DiscordException):
         self.response = response
         self.status = response.status
         if isinstance(message, dict):
-            self.code = message.get("code", 0)
-            base = message.get("message", "")
-            errors = message.get("errors")
+            self.code = message.get('code', 0)
+            base = message.get('message', '')
+            errors = message.get('errors')
             if errors:
                 errors = flatten_error_dict(errors)
-                helpful = "\n".join("In %s: %s" % t for t in errors.items())
-                self.text = base + "\n" + helpful
+                helpful = '\n'.join('In %s: %s' % t for t in errors.items())
+                self.text = base + '\n' + helpful
             else:
                 self.text = base
         else:
             self.text = message
             self.code = 0
 
-        fmt = "{0.status} {0.reason} (error code: {1})"
+        fmt = '{0.status} {0.reason} (error code: {1})'
         if len(self.text):
-            fmt += ": {2}"
+            fmt += ': {2}'
 
         super().__init__(fmt.format(self.response, self.code, self.text))
 
@@ -194,9 +194,9 @@ class ConnectionClosed(ClientException):
         # reconfigured to subclass ClientException for users
         self.code = code or socket.close_code
         # aiohttp doesn't seem to consistently provide close reason
-        self.reason = ""
+        self.reason = ''
         self.shard_id = shard_id
-        super().__init__(f"Shard ID {self.shard_id} WebSocket closed with {self.code}")
+        super().__init__(f'Shard ID {self.shard_id} WebSocket closed with {self.code}')
 
 
 class PrivilegedIntentsRequired(ClientException):
@@ -218,9 +218,9 @@ class PrivilegedIntentsRequired(ClientException):
     def __init__(self, shard_id):
         self.shard_id = shard_id
         msg = (
-            "Shard ID %s is requesting privileged intents that have not been explicitly enabled in the "
-            "developer portal. It is recommended to go to https://discord.com/developers/applications/ "
+            'Shard ID %s is requesting privileged intents that have not been explicitly enabled in the '
+            'developer portal. It is recommended to go to https://discord.com/developers/applications/ '
             "and explicitly enable the privileged intents within your application's page. If this is not "
-            "possible, then consider disabling the privileged intents instead."
+            'possible, then consider disabling the privileged intents instead.'
         )
         super().__init__(msg % shard_id)

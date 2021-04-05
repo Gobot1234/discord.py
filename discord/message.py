@@ -43,11 +43,11 @@ from .mixins import Hashable
 from .sticker import Sticker
 
 __all__ = (
-    "Attachment",
-    "Message",
-    "PartialMessage",
-    "MessageReference",
-    "DeletedReferencedMessage",
+    'Attachment',
+    'Message',
+    'PartialMessage',
+    'MessageReference',
+    'DeletedReferencedMessage',
 )
 
 
@@ -56,15 +56,15 @@ def convert_emoji_reaction(emoji):
         emoji = emoji.emoji
 
     if isinstance(emoji, Emoji):
-        return f"{emoji.name}:{emoji.id}"
+        return f'{emoji.name}:{emoji.id}'
     if isinstance(emoji, PartialEmoji):
         return emoji._as_reaction()
     if isinstance(emoji, str):
         # Reactions can be in :name:id format, but not <:name:id>.
         # No existing emojis have <> in them, so this should be okay.
-        return emoji.strip("<>")
+        return emoji.strip('<>')
 
-    raise InvalidArgument(f"emoji argument must be str, Emoji, or Reaction not {emoji.__class__.__name__}.")
+    raise InvalidArgument(f'emoji argument must be str, Emoji, or Reaction not {emoji.__class__.__name__}.')
 
 
 class Attachment(Hashable):
@@ -116,28 +116,28 @@ class Attachment(Hashable):
         .. versionadded: 1.7
     """
 
-    __slots__ = ("id", "size", "height", "width", "filename", "url", "proxy_url", "_http", "content_type")
+    __slots__ = ('id', 'size', 'height', 'width', 'filename', 'url', 'proxy_url', '_http', 'content_type')
 
     def __init__(self, *, data, state):
-        self.id = int(data["id"])
-        self.size = data["size"]
-        self.height = data.get("height")
-        self.width = data.get("width")
-        self.filename = data["filename"]
-        self.url = data.get("url")
-        self.proxy_url = data.get("proxy_url")
+        self.id = int(data['id'])
+        self.size = data['size']
+        self.height = data.get('height')
+        self.width = data.get('width')
+        self.filename = data['filename']
+        self.url = data.get('url')
+        self.proxy_url = data.get('proxy_url')
         self._http = state.http
-        self.content_type = data.get("content_type")
+        self.content_type = data.get('content_type')
 
     def is_spoiler(self):
         """:class:`bool`: Whether this attachment contains a spoiler."""
-        return self.filename.startswith("SPOILER_")
+        return self.filename.startswith('SPOILER_')
 
     def __repr__(self):
-        return "<Attachment id={0.id} filename={0.filename!r} url={0.url!r}>".format(self)
+        return '<Attachment id={0.id} filename={0.filename!r} url={0.url!r}>'.format(self)
 
     def __str__(self):
-        return self.url or ""
+        return self.url or ''
 
     async def save(self, fp, *, seek_begin=True, use_cached=False):
         """|coro|
@@ -180,7 +180,7 @@ class Attachment(Hashable):
                 fp.seek(0)
             return written
         else:
-            with open(fp, "wb") as f:
+            with open(fp, 'wb') as f:
                 return f.write(data)
 
     async def read(self, *, use_cached=False):
@@ -271,7 +271,7 @@ class DeletedReferencedMessage:
     .. versionadded:: 1.6
     """
 
-    __slots__ = "_parent"
+    __slots__ = '_parent'
 
     def __init__(self, parent):
         self._parent = parent
@@ -326,7 +326,7 @@ class MessageReference:
         .. versionadded:: 1.6
     """
 
-    __slots__ = ("message_id", "channel_id", "guild_id", "fail_if_not_exists", "resolved", "_state")
+    __slots__ = ('message_id', 'channel_id', 'guild_id', 'fail_if_not_exists', 'resolved', '_state')
 
     def __init__(self, *, message_id, channel_id, guild_id=None, fail_if_not_exists=True):
         self._state = None
@@ -339,9 +339,9 @@ class MessageReference:
     @classmethod
     def with_state(cls, state, data):
         self = cls.__new__(cls)
-        self.message_id = utils._get_as_snowflake(data, "message_id")
-        self.channel_id = int(data.pop("channel_id"))
-        self.guild_id = utils._get_as_snowflake(data, "guild_id")
+        self.message_id = utils._get_as_snowflake(data, 'message_id')
+        self.channel_id = int(data.pop('channel_id'))
+        self.guild_id = utils._get_as_snowflake(data, 'guild_id')
         self._state = state
         self.resolved = None
         return self
@@ -370,7 +370,7 @@ class MessageReference:
         self = cls(
             message_id=message.id,
             channel_id=message.channel.id,
-            guild_id=getattr(message.guild, "id", None),
+            guild_id=getattr(message.guild, 'id', None),
             fail_if_not_exists=fail_if_not_exists,
         )
         self._state = message._state
@@ -387,38 +387,38 @@ class MessageReference:
 
         .. versionadded:: 1.7
         """
-        guild_id = self.guild_id if self.guild_id is not None else "@me"
-        return "https://discord.com/channels/{0}/{1.channel_id}/{1.message_id}".format(guild_id, self)
+        guild_id = self.guild_id if self.guild_id is not None else '@me'
+        return 'https://discord.com/channels/{0}/{1.channel_id}/{1.message_id}'.format(guild_id, self)
 
     def __repr__(self):
-        return "<MessageReference message_id={0.message_id!r} channel_id={0.channel_id!r} guild_id={0.guild_id!r}>".format(
+        return '<MessageReference message_id={0.message_id!r} channel_id={0.channel_id!r} guild_id={0.guild_id!r}>'.format(
             self
         )
 
     def to_dict(self):
-        result = {"message_id": self.message_id} if self.message_id is not None else {}
-        result["channel_id"] = self.channel_id
+        result = {'message_id': self.message_id} if self.message_id is not None else {}
+        result['channel_id'] = self.channel_id
         if self.guild_id is not None:
-            result["guild_id"] = self.guild_id
+            result['guild_id'] = self.guild_id
         if self.fail_if_not_exists is not None:
-            result["fail_if_not_exists"] = self.fail_if_not_exists
+            result['fail_if_not_exists'] = self.fail_if_not_exists
         return result
 
     to_message_reference_dict = to_dict
 
 
 def flatten_handlers(cls):
-    prefix = len("_handle_")
+    prefix = len('_handle_')
     handlers = [
         (key[prefix:], value)
         for key, value in cls.__dict__.items()
-        if key.startswith("_handle_") and key != "_handle_member"
+        if key.startswith('_handle_') and key != '_handle_member'
     ]
 
     # store _handle_member last
-    handlers.append(("member", cls._handle_member))
+    handlers.append(('member', cls._handle_member))
     cls._HANDLERS = handlers
-    cls._CACHED_SLOTS = [attr for attr in cls.__slots__ if attr.startswith("_cs_")]
+    cls._CACHED_SLOTS = [attr for attr in cls.__slots__ if attr.startswith('_cs_')]
     return cls
 
 
@@ -534,65 +534,65 @@ class Message(Hashable):
     """
 
     __slots__ = (
-        "_edited_timestamp",
-        "tts",
-        "content",
-        "channel",
-        "webhook_id",
-        "mention_everyone",
-        "embeds",
-        "id",
-        "mentions",
-        "author",
-        "_cs_channel_mentions",
-        "_cs_raw_mentions",
-        "attachments",
-        "_cs_clean_content",
-        "_cs_raw_channel_mentions",
-        "nonce",
-        "pinned",
-        "role_mentions",
-        "_cs_raw_role_mentions",
-        "type",
-        "flags",
-        "_cs_system_content",
-        "_cs_guild",
-        "_state",
-        "reactions",
-        "reference",
-        "application",
-        "activity",
-        "stickers",
+        '_edited_timestamp',
+        'tts',
+        'content',
+        'channel',
+        'webhook_id',
+        'mention_everyone',
+        'embeds',
+        'id',
+        'mentions',
+        'author',
+        '_cs_channel_mentions',
+        '_cs_raw_mentions',
+        'attachments',
+        '_cs_clean_content',
+        '_cs_raw_channel_mentions',
+        'nonce',
+        'pinned',
+        'role_mentions',
+        '_cs_raw_role_mentions',
+        'type',
+        'flags',
+        '_cs_system_content',
+        '_cs_guild',
+        '_state',
+        'reactions',
+        'reference',
+        'application',
+        'activity',
+        'stickers',
     )
 
     def __init__(self, *, state, channel, data):
         self._state = state
-        self.id = int(data["id"])
-        self.webhook_id = utils._get_as_snowflake(data, "webhook_id")
-        self.reactions = [Reaction(message=self, data=d) for d in data.get("reactions", [])]
-        self.attachments = [Attachment(data=a, state=self._state) for a in data["attachments"]]
-        self.embeds = [Embed.from_dict(a) for a in data["embeds"]]
-        self.application = data.get("application")
-        self.activity = data.get("activity")
+        self.id = int(data['id'])
+        self.webhook_id = utils._get_as_snowflake(data, 'webhook_id')
+        self.reactions = [Reaction(message=self, data=d) for d in data.get('reactions', [])]
+        self.attachments = [Attachment(data=a, state=self._state) for a in data['attachments']]
+        self.embeds = [Embed.from_dict(a) for a in data['embeds']]
+        self.application = data.get('application')
+        self.activity = data.get('activity')
         self.channel = channel
-        self._edited_timestamp = utils.parse_time(data["edited_timestamp"])
-        self.type = try_enum(MessageType, data["type"])
-        self.pinned = data["pinned"]
-        self.flags = MessageFlags._from_value(data.get("flags", 0))
-        self.mention_everyone = data["mention_everyone"]
-        self.tts = data["tts"]
-        self.content = data["content"]
-        self.nonce = data.get("nonce")
-        self.stickers = [Sticker(data=data, state=state) for data in data.get("stickers", [])]
+        self._edited_timestamp = utils.parse_time(data['edited_timestamp'])
+        self.type = try_enum(MessageType, data['type'])
+        self.pinned = data['pinned']
+        self.flags = MessageFlags._from_value(data.get('flags', 0))
+        self.mention_everyone = data['mention_everyone']
+        self.tts = data['tts']
+        self.content = data['content']
+        self.nonce = data.get('nonce')
+        self.stickers = [Sticker(data=data, state=state) for data in data.get('stickers', [])]
 
         try:
-            ref = data["message_reference"]
+            ref = data['message_reference']
         except KeyError:
             self.reference = None
         else:
             self.reference = ref = MessageReference.with_state(state, ref)
             try:
-                resolved = data["referenced_message"]
+                resolved = data['referenced_message']
             except KeyError:
                 pass
             else:
@@ -607,14 +607,14 @@ class Message(Hashable):
 
                     ref.resolved = self.__class__(channel=chan, data=resolved, state=state)
 
-        for handler in ("author", "member", "mentions", "mention_roles", "flags"):
+        for handler in ('author', 'member', 'mentions', 'mention_roles', 'flags'):
             try:
-                getattr(self, f"_handle_{handler}")(data[handler])
+                getattr(self, f'_handle_{handler}')(data[handler])
             except KeyError:
                 continue
 
     def __repr__(self):
-        return "<Message id={0.id} channel={0.channel!r} type={0.type!r} author={0.author!r} flags={0.flags!r}>".format(self)
+        return '<Message id={0.id} channel={0.channel!r} type={0.type!r} author={0.author!r} flags={0.flags!r}>'.format(self)
 
     def _try_patch(self, data, key, transform=None):
         try:
@@ -629,7 +629,7 @@ class Message(Hashable):
 
     def _add_reaction(self, data, emoji, user_id):
         reaction = utils.find(lambda r: r.emoji == emoji, self.reactions)
-        is_me = data["me"] = user_id == self._state.self_id
+        is_me = data['me'] = user_id == self._state.self_id
 
         if reaction is None:
             reaction = Reaction(message=self, data=data, emoji=emoji)
@@ -646,7 +646,7 @@ class Message(Hashable):
 
         if reaction is None:
             # already removed?
-            raise ValueError("Emoji already removed?")
+            raise ValueError('Emoji already removed?')
 
         # if reaction isn't in the list, we crash. This means discord
         # sent bad data, or we stored improperly
@@ -760,7 +760,7 @@ class Message(Hashable):
             return
 
         for mention in filter(None, mentions):
-            id_search = int(mention["id"])
+            id_search = int(mention['id'])
             member = guild.get_member(id_search)
             if member is not None:
                 r.append(member)
@@ -783,12 +783,12 @@ class Message(Hashable):
         except AttributeError:
             pass
 
-    @utils.cached_slot_property("_cs_guild")
+    @utils.cached_slot_property('_cs_guild')
     def guild(self):
         """Optional[:class:`Guild`]: The guild that the message belongs to, if applicable."""
-        return getattr(self.channel, "guild", None)
+        return getattr(self.channel, 'guild', None)
 
-    @utils.cached_slot_property("_cs_raw_mentions")
+    @utils.cached_slot_property('_cs_raw_mentions')
     def raw_mentions(self):
         """List[:class:`int`]: A property that returns an array of user IDs matched with
         the syntax of ``<@user_id>`` in the message content.
@@ -796,30 +796,30 @@ class Message(Hashable):
         This allows you to receive the user IDs of mentioned users
         even in a private message context.
         """
-        return [int(x) for x in re.findall(r"<@!?([0-9]+)>", self.content)]
+        return [int(x) for x in re.findall(r'<@!?([0-9]+)>', self.content)]
 
-    @utils.cached_slot_property("_cs_raw_channel_mentions")
+    @utils.cached_slot_property('_cs_raw_channel_mentions')
     def raw_channel_mentions(self):
         """List[:class:`int`]: A property that returns an array of channel IDs matched with
         the syntax of ``<#channel_id>`` in the message content.
         """
-        return [int(x) for x in re.findall(r"<#([0-9]+)>", self.content)]
+        return [int(x) for x in re.findall(r'<#([0-9]+)>', self.content)]
 
-    @utils.cached_slot_property("_cs_raw_role_mentions")
+    @utils.cached_slot_property('_cs_raw_role_mentions')
     def raw_role_mentions(self):
         """List[:class:`int`]: A property that returns an array of role IDs matched with
         the syntax of ``<@&role_id>`` in the message content.
         """
-        return [int(x) for x in re.findall(r"<@&([0-9]+)>", self.content)]
+        return [int(x) for x in re.findall(r'<@&([0-9]+)>', self.content)]
 
-    @utils.cached_slot_property("_cs_channel_mentions")
+    @utils.cached_slot_property('_cs_channel_mentions')
     def channel_mentions(self):
         if self.guild is None:
             return []
         it = filter(None, map(self.guild.get_channel, self.raw_channel_mentions))
         return utils._unique(it)
 
-    @utils.cached_slot_property("_cs_clean_content")
+    @utils.cached_slot_property('_cs_clean_content')
     def clean_content(self):
         """:class:`str`: A property that returns the content in a "cleaned up"
         manner. This basically means that mentions are transformed
@@ -836,24 +836,24 @@ class Message(Hashable):
             respectively, along with this function.
         """
 
-        transformations = {re.escape(f"<#{channel.id}>"): "#" + channel.name for channel in self.channel_mentions}
+        transformations = {re.escape(f'<#{channel.id}>'): '#' + channel.name for channel in self.channel_mentions}
 
-        mention_transforms = {re.escape(f"<@{member.id}>"): "@" + member.display_name for member in self.mentions}
+        mention_transforms = {re.escape(f'<@{member.id}>'): '@' + member.display_name for member in self.mentions}
 
         # add the <@!user_id> cases as well..
-        second_mention_transforms = {re.escape(f"<@!{member.id}>"): "@" + member.display_name for member in self.mentions}
+        second_mention_transforms = {re.escape(f'<@!{member.id}>'): '@' + member.display_name for member in self.mentions}
 
         transformations.update(mention_transforms)
         transformations.update(second_mention_transforms)
 
         if self.guild is not None:
-            role_transforms = {re.escape(f"<@&{role.id}>"): "@" + role.name for role in self.role_mentions}
+            role_transforms = {re.escape(f'<@&{role.id}>'): '@' + role.name for role in self.role_mentions}
             transformations.update(role_transforms)
 
         def repl(obj):
-            return transformations.get(re.escape(obj.group(0)), "")
+            return transformations.get(re.escape(obj.group(0)), '')
 
-        pattern = re.compile("|".join(transformations.keys()))
+        pattern = re.compile('|'.join(transformations.keys()))
         result = pattern.sub(repl, self.content)
         return escape_mentions(result)
 
@@ -870,8 +870,8 @@ class Message(Hashable):
     @property
     def jump_url(self):
         """:class:`str`: Returns a URL that allows the client to jump to this message."""
-        guild_id = getattr(self.guild, "id", "@me")
-        return "https://discord.com/channels/{0}/{1.channel.id}/{1.id}".format(guild_id, self)
+        guild_id = getattr(self.guild, 'id', '@me')
+        return 'https://discord.com/channels/{0}/{1.channel.id}/{1.id}'.format(guild_id, self)
 
     def is_system(self):
         """:class:`bool`: Whether the message is a system message.
@@ -880,7 +880,7 @@ class Message(Hashable):
         """
         return self.type is not MessageType.default
 
-    @utils.cached_slot_property("_cs_system_content")
+    @utils.cached_slot_property('_cs_system_content')
     def system_content(self):
         r""":class:`str`: A property that returns the content that is rendered
         regardless of the :attr:`Message.type`.
@@ -894,35 +894,35 @@ class Message(Hashable):
             return self.content
 
         if self.type is MessageType.pins_add:
-            return f"{self.author.name} pinned a message to this channel."
+            return f'{self.author.name} pinned a message to this channel.'
 
         if self.type is MessageType.recipient_add:
-            return "{0.name} added {1.name} to the group.".format(self.author, self.mentions[0])
+            return '{0.name} added {1.name} to the group.'.format(self.author, self.mentions[0])
 
         if self.type is MessageType.recipient_remove:
-            return "{0.name} removed {1.name} from the group.".format(self.author, self.mentions[0])
+            return '{0.name} removed {1.name} from the group.'.format(self.author, self.mentions[0])
 
         if self.type is MessageType.channel_name_change:
-            return "{0.author.name} changed the channel name: {0.content}".format(self)
+            return '{0.author.name} changed the channel name: {0.content}'.format(self)
 
         if self.type is MessageType.channel_icon_change:
-            return f"{self.author.name} changed the channel icon."
+            return f'{self.author.name} changed the channel icon.'
 
         if self.type is MessageType.new_member:
             formats = [
-                "{0} joined the party.",
-                "{0} is here.",
-                "Welcome, {0}. We hope you brought pizza.",
-                "A wild {0} appeared.",
-                "{0} just landed.",
-                "{0} just slid into the server.",
-                "{0} just showed up!",
-                "Welcome {0}. Say hi!",
-                "{0} hopped into the server.",
-                "Everyone welcome {0}!",
+                '{0} joined the party.',
+                '{0} is here.',
+                'Welcome, {0}. We hope you brought pizza.',
+                'A wild {0} appeared.',
+                '{0} just landed.',
+                '{0} just slid into the server.',
+                '{0} just showed up!',
+                'Welcome {0}. Say hi!',
+                '{0} hopped into the server.',
+                'Everyone welcome {0}!',
                 "Glad you're here, {0}.",
-                "Good to see you, {0}.",
-                "Yay you made it, {0}!",
+                'Good to see you, {0}.',
+                'Yay you made it, {0}!',
             ]
 
             # manually reconstruct the epoch with millisecond precision, because
@@ -932,34 +932,34 @@ class Message(Hashable):
             return formats[created_at_ms % len(formats)].format(self.author.name)
 
         if self.type is MessageType.premium_guild_subscription:
-            return f"{self.author.name} just boosted the server!"
+            return f'{self.author.name} just boosted the server!'
 
         if self.type is MessageType.premium_guild_tier_1:
-            return "{0.author.name} just boosted the server! {0.guild} has achieved **Level 1!**".format(self)
+            return '{0.author.name} just boosted the server! {0.guild} has achieved **Level 1!**'.format(self)
 
         if self.type is MessageType.premium_guild_tier_2:
-            return "{0.author.name} just boosted the server! {0.guild} has achieved **Level 2!**".format(self)
+            return '{0.author.name} just boosted the server! {0.guild} has achieved **Level 2!**'.format(self)
 
         if self.type is MessageType.premium_guild_tier_3:
-            return "{0.author.name} just boosted the server! {0.guild} has achieved **Level 3!**".format(self)
+            return '{0.author.name} just boosted the server! {0.guild} has achieved **Level 3!**'.format(self)
 
         if self.type is MessageType.channel_follow_add:
-            return "{0.author.name} has added {0.content} to this channel".format(self)
+            return '{0.author.name} has added {0.content} to this channel'.format(self)
 
         if self.type is MessageType.guild_stream:
-            return "{0.author.name} is live! Now streaming {0.author.activity.name}".format(self)
+            return '{0.author.name} is live! Now streaming {0.author.activity.name}'.format(self)
 
         if self.type is MessageType.guild_discovery_disqualified:
-            return "This server has been removed from Server Discovery because it no longer passes all the requirements. Check Server Settings for more details."
+            return 'This server has been removed from Server Discovery because it no longer passes all the requirements. Check Server Settings for more details.'
 
         if self.type is MessageType.guild_discovery_requalified:
-            return "This server is eligible for Server Discovery again and has been automatically relisted!"
+            return 'This server is eligible for Server Discovery again and has been automatically relisted!'
 
         if self.type is MessageType.guild_discovery_grace_period_initial_warning:
-            return "This server has failed Discovery activity requirements for 1 week. If this server fails for 4 weeks in a row, it will be automatically removed from Discovery."
+            return 'This server has failed Discovery activity requirements for 1 week. If this server fails for 4 weeks in a row, it will be automatically removed from Discovery.'
 
         if self.type is MessageType.guild_discovery_grace_period_final_warning:
-            return "This server has failed Discovery activity requirements for 3 weeks in a row. If this server fails for 1 more week, it will be removed from Discovery."
+            return 'This server has failed Discovery activity requirements for 3 weeks in a row. If this server fails for 1 more week, it will be removed from Discovery.'
 
     async def delete(self, *, delay=None):
         """|coro|
@@ -1048,34 +1048,34 @@ class Message(Hashable):
         """
 
         try:
-            content = fields["content"]
+            content = fields['content']
         except KeyError:
             pass
         else:
             if content is not None:
-                fields["content"] = str(content)
+                fields['content'] = str(content)
 
         try:
-            embed = fields["embed"]
+            embed = fields['embed']
         except KeyError:
             pass
         else:
             if embed is not None:
-                fields["embed"] = embed.to_dict()
+                fields['embed'] = embed.to_dict()
 
         try:
-            suppress = fields.pop("suppress")
+            suppress = fields.pop('suppress')
         except KeyError:
             pass
         else:
             flags = MessageFlags._from_value(self.flags.value)
             flags.suppress_embeds = suppress
-            fields["flags"] = flags.value
+            fields['flags'] = flags.value
 
-        delete_after = fields.pop("delete_after", None)
+        delete_after = fields.pop('delete_after', None)
 
         try:
-            allowed_mentions = fields.pop("allowed_mentions")
+            allowed_mentions = fields.pop('allowed_mentions')
         except KeyError:
             pass
         else:
@@ -1084,7 +1084,7 @@ class Message(Hashable):
                     allowed_mentions = self._state.allowed_mentions.merge(allowed_mentions).to_dict()
                 else:
                     allowed_mentions = allowed_mentions.to_dict()
-                fields["allowed_mentions"] = allowed_mentions
+                fields['allowed_mentions'] = allowed_mentions
 
         if fields:
             data = await self._state.http.edit_message(self.channel.id, self.id, **fields)
@@ -1334,12 +1334,12 @@ class Message(Hashable):
 
     def to_message_reference_dict(self):
         data = {
-            "message_id": self.id,
-            "channel_id": self.channel.id,
+            'message_id': self.id,
+            'channel_id': self.channel.id,
         }
 
         if self.guild is not None:
-            data["guild_id"] = self.guild.id
+            data['guild_id'] = self.guild.id
 
         return data
 
@@ -1387,26 +1387,26 @@ class PartialMessage(Hashable):
         The message ID.
     """
 
-    __slots__ = ("channel", "id", "_cs_guild", "_state")
+    __slots__ = ('channel', 'id', '_cs_guild', '_state')
 
     _exported_names = (
-        "jump_url",
-        "delete",
-        "publish",
-        "pin",
-        "unpin",
-        "add_reaction",
-        "remove_reaction",
-        "clear_reaction",
-        "clear_reactions",
-        "reply",
-        "to_reference",
-        "to_message_reference_dict",
+        'jump_url',
+        'delete',
+        'publish',
+        'pin',
+        'unpin',
+        'add_reaction',
+        'remove_reaction',
+        'clear_reaction',
+        'clear_reactions',
+        'reply',
+        'to_reference',
+        'to_message_reference_dict',
     )
 
     def __init__(self, *, channel, id):
         if channel.type not in (ChannelType.text, ChannelType.news, ChannelType.private):
-            raise TypeError(f"Expected TextChannel or DMChannel not {type(channel)!r}")
+            raise TypeError(f'Expected TextChannel or DMChannel not {type(channel)!r}')
 
         self.channel = channel
         self._state = channel._state
@@ -1422,17 +1422,17 @@ class PartialMessage(Hashable):
     pinned = property(None, lambda x, y: ...)
 
     def __repr__(self):
-        return "<PartialMessage id={0.id} channel={0.channel!r}>".format(self)
+        return '<PartialMessage id={0.id} channel={0.channel!r}>'.format(self)
 
     @property
     def created_at(self):
         """:class:`datetime.datetime`: The partial message's creation time in UTC."""
         return utils.snowflake_time(self.id)
 
-    @utils.cached_slot_property("_cs_guild")
+    @utils.cached_slot_property('_cs_guild')
     def guild(self):
         """Optional[:class:`Guild`]: The guild that the partial message belongs to, if applicable."""
-        return getattr(self.channel, "guild", None)
+        return getattr(self.channel, 'guild', None)
 
     async def fetch(self):
         """|coro|
@@ -1509,34 +1509,34 @@ class PartialMessage(Hashable):
         """
 
         try:
-            content = fields["content"]
+            content = fields['content']
         except KeyError:
             pass
         else:
             if content is not None:
-                fields["content"] = str(content)
+                fields['content'] = str(content)
 
         try:
-            embed = fields["embed"]
+            embed = fields['embed']
         except KeyError:
             pass
         else:
             if embed is not None:
-                fields["embed"] = embed.to_dict()
+                fields['embed'] = embed.to_dict()
 
         try:
-            suppress = fields.pop("suppress")
+            suppress = fields.pop('suppress')
         except KeyError:
             pass
         else:
             flags = MessageFlags._from_value(0)
             flags.suppress_embeds = suppress
-            fields["flags"] = flags.value
+            fields['flags'] = flags.value
 
-        delete_after = fields.pop("delete_after", None)
+        delete_after = fields.pop('delete_after', None)
 
         try:
-            allowed_mentions = fields.pop("allowed_mentions")
+            allowed_mentions = fields.pop('allowed_mentions')
         except KeyError:
             pass
         else:
@@ -1545,7 +1545,7 @@ class PartialMessage(Hashable):
                     allowed_mentions = self._state.allowed_mentions.merge(allowed_mentions).to_dict()
                 else:
                     allowed_mentions = allowed_mentions.to_dict()
-                fields["allowed_mentions"] = allowed_mentions
+                fields['allowed_mentions'] = allowed_mentions
 
         if fields:
             data = await self._state.http.edit_message(self.channel.id, self.id, **fields)

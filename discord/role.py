@@ -49,19 +49,19 @@ class RoleTags:
     """
 
     __slots__ = (
-        "bot_id",
-        "integration_id",
-        "_premium_subscriber",
+        'bot_id',
+        'integration_id',
+        '_premium_subscriber',
     )
 
     def __init__(self, data):
-        self.bot_id = _get_as_snowflake(data, "bot_id")
-        self.integration_id = _get_as_snowflake(data, "integration_id")
+        self.bot_id = _get_as_snowflake(data, 'bot_id')
+        self.integration_id = _get_as_snowflake(data, 'integration_id')
         # NOTE: The API returns "null" for this if it's valid, which corresponds to None.
         # This is different from other fields where "null" means "not there".
         # So in this case, a value of None is the same as True.
         # Which means we would need a different sentinel. For this purpose I used ellipsis.
-        self._premium_subscriber = data.get("premium_subscriber", ...)
+        self._premium_subscriber = data.get('premium_subscriber', ...)
 
     def is_bot_managed(self):
         """:class:`bool`: Whether the role is associated with a bot."""
@@ -76,7 +76,7 @@ class RoleTags:
         return self.integration_id is not None
 
     def __repr__(self):
-        return "<RoleTags bot_id={0.bot_id} integration_id={0.integration_id} " "premium_subscriber={1}>".format(
+        return '<RoleTags bot_id={0.bot_id} integration_id={0.integration_id} ' 'premium_subscriber={1}>'.format(
             self, self.is_premium_subscriber()
         )
 
@@ -141,37 +141,37 @@ class Role(Hashable):
     """
 
     __slots__ = (
-        "id",
-        "name",
-        "_permissions",
-        "_colour",
-        "position",
-        "managed",
-        "mentionable",
-        "hoist",
-        "guild",
-        "tags",
-        "_state",
+        'id',
+        'name',
+        '_permissions',
+        '_colour',
+        'position',
+        'managed',
+        'mentionable',
+        'hoist',
+        'guild',
+        'tags',
+        '_state',
     )
 
     def __init__(self, *, guild, state, data):
         self.guild = guild
         self._state = state
-        self.id = int(data["id"])
+        self.id = int(data['id'])
         self._update(data)
 
     def __str__(self):
         return self.name
 
     def __repr__(self):
-        return "<Role id={0.id} name={0.name!r}>".format(self)
+        return '<Role id={0.id} name={0.name!r}>'.format(self)
 
     def __lt__(self, other):
         if not isinstance(other, Role) or not isinstance(self, Role):
             return NotImplemented
 
         if self.guild != other.guild:
-            raise RuntimeError("cannot compare roles from two different guilds.")
+            raise RuntimeError('cannot compare roles from two different guilds.')
 
         # the @everyone role is always the lowest role in hierarchy
         guild_id = self.guild.id
@@ -203,16 +203,16 @@ class Role(Hashable):
         return not r
 
     def _update(self, data):
-        self.name = data["name"]
-        self._permissions = int(data.get("permissions_new", 0))
-        self.position = data.get("position", 0)
-        self._colour = data.get("color", 0)
-        self.hoist = data.get("hoist", False)
-        self.managed = data.get("managed", False)
-        self.mentionable = data.get("mentionable", False)
+        self.name = data['name']
+        self._permissions = int(data.get('permissions_new', 0))
+        self.position = data.get('position', 0)
+        self._colour = data.get('color', 0)
+        self.hoist = data.get('hoist', False)
+        self.managed = data.get('managed', False)
+        self.mentionable = data.get('mentionable', False)
 
         try:
-            self.tags = RoleTags(data["tags"])
+            self.tags = RoleTags(data['tags'])
         except KeyError:
             self.tags = None
 
@@ -264,7 +264,7 @@ class Role(Hashable):
     @property
     def mention(self):
         """:class:`str`: Returns a string that allows you to mention a role."""
-        return f"<@&{self.id}>"
+        return f'<@&{self.id}>'
 
     @property
     def members(self):
@@ -278,10 +278,10 @@ class Role(Hashable):
 
     async def _move(self, position, reason):
         if position <= 0:
-            raise InvalidArgument("Cannot move role to position 0 or below")
+            raise InvalidArgument('Cannot move role to position 0 or below')
 
         if self.is_default():
-            raise InvalidArgument("Cannot move default role")
+            raise InvalidArgument('Cannot move default role')
 
         if self.position == position:
             return  # Save discord the extra request.
@@ -296,7 +296,7 @@ class Role(Hashable):
         else:
             roles.append(self.id)
 
-        payload = [{"id": z[0], "position": z[1]} for z in zip(roles, change_range)]
+        payload = [{'id': z[0], 'position': z[1]} for z in zip(roles, change_range)]
         await http.move_role_position(self.guild.id, payload, reason=reason)
 
     async def edit(self, *, reason=None, **fields):
@@ -341,25 +341,25 @@ class Role(Hashable):
             role was asked to be moved.
         """
 
-        position = fields.get("position")
+        position = fields.get('position')
         if position is not None:
             await self._move(position, reason=reason)
             self.position = position
 
         try:
-            colour = fields["colour"]
+            colour = fields['colour']
         except KeyError:
-            colour = fields.get("color", self.colour)
+            colour = fields.get('color', self.colour)
 
         if isinstance(colour, int):
             colour = Colour(value=colour)
 
         payload = {
-            "name": fields.get("name", self.name),
-            "permissions": str(fields.get("permissions", self.permissions).value),
-            "color": colour.value,
-            "hoist": fields.get("hoist", self.hoist),
-            "mentionable": fields.get("mentionable", self.mentionable),
+            'name': fields.get('name', self.name),
+            'permissions': str(fields.get('permissions', self.permissions).value),
+            'color': colour.value,
+            'hoist': fields.get('hoist', self.hoist),
+            'mentionable': fields.get('mentionable', self.mentionable),
         }
 
         data = await self._state.http.edit_role(self.guild.id, self.id, reason=reason, **payload)

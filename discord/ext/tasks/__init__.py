@@ -65,7 +65,7 @@ class Loop:
         self._stop_next_iteration = False
 
         if self.count is not None and self.count <= 0:
-            raise ValueError("count must be greater than 0 or None.")
+            raise ValueError('count must be greater than 0 or None.')
 
         self.change_interval(seconds=seconds, minutes=minutes, hours=hours)
         self._last_iteration_failed = False
@@ -73,10 +73,10 @@ class Loop:
         self._next_iteration = None
 
         if not inspect.iscoroutinefunction(self.coro):
-            raise TypeError("Expected coroutine function, not {0.__name__!r}.".format(type(self.coro)))
+            raise TypeError('Expected coroutine function, not {0.__name__!r}.'.format(type(self.coro)))
 
     async def _call_loop_function(self, name, *args, **kwargs):
-        coro = getattr(self, "_" + name)
+        coro = getattr(self, '_' + name)
         if coro is None:
             return
 
@@ -87,7 +87,7 @@ class Loop:
 
     async def _loop(self, *args, **kwargs):
         backoff = ExponentialBackoff()
-        await self._call_loop_function("before_loop")
+        await self._call_loop_function('before_loop')
         sleep_until = discord.utils.sleep_until
         self._last_iteration_failed = False
         self._next_iteration = datetime.datetime.now(datetime.timezone.utc)
@@ -121,10 +121,10 @@ class Loop:
             raise
         except Exception as exc:
             self._has_failed = True
-            await self._call_loop_function("error", exc)
+            await self._call_loop_function('error', exc)
             raise exc
         finally:
-            await self._call_loop_function("after_loop")
+            await self._call_loop_function('after_loop')
             self._is_being_cancelled = False
             self._current_loop = 0
             self._stop_next_iteration = False
@@ -209,7 +209,7 @@ class Loop:
         """
 
         if self._task is not None and not self._task.done():
-            raise RuntimeError("Task is already launched and is not completed.")
+            raise RuntimeError('Task is already launched and is not completed.')
 
         if self._injected is not None:
             args = (self._injected, *args)
@@ -296,9 +296,9 @@ class Loop:
 
         for exc in exceptions:
             if not inspect.isclass(exc):
-                raise TypeError(f"{exc!r} must be a class.")
+                raise TypeError(f'{exc!r} must be a class.')
             if not issubclass(exc, BaseException):
-                raise TypeError(f"{exc!r} must inherit from BaseException.")
+                raise TypeError(f'{exc!r} must inherit from BaseException.')
 
         self._valid_exception = (*self._valid_exception, *exceptions)
 
@@ -352,7 +352,7 @@ class Loop:
 
     async def _error(self, *args):
         exception = args[-1]
-        print(f"Unhandled exception in internal background task {self.coro.__name__!r}.", file=sys.stderr)
+        print(f'Unhandled exception in internal background task {self.coro.__name__!r}.', file=sys.stderr)
         traceback.print_exception(type(exception), exception, exception.__traceback__, file=sys.stderr)
 
     def before_loop(self, coro):
@@ -375,7 +375,7 @@ class Loop:
         """
 
         if not inspect.iscoroutinefunction(coro):
-            raise TypeError("Expected coroutine function, received {0.__name__!r}.".format(type(coro)))
+            raise TypeError('Expected coroutine function, received {0.__name__!r}.'.format(type(coro)))
 
         self._before_loop = coro
         return coro
@@ -403,7 +403,7 @@ class Loop:
         """
 
         if not inspect.iscoroutinefunction(coro):
-            raise TypeError("Expected coroutine function, received {0.__name__!r}.".format(type(coro)))
+            raise TypeError('Expected coroutine function, received {0.__name__!r}.'.format(type(coro)))
 
         self._after_loop = coro
         return coro
@@ -429,7 +429,7 @@ class Loop:
             The function was not a coroutine.
         """
         if not inspect.iscoroutinefunction(coro):
-            raise TypeError("Expected coroutine function, received {0.__name__!r}.".format(type(coro)))
+            raise TypeError('Expected coroutine function, received {0.__name__!r}.'.format(type(coro)))
 
         self._error = coro
         return coro
@@ -464,7 +464,7 @@ class Loop:
 
         sleep = seconds + (minutes * 60.0) + (hours * 3600.0)
         if sleep < 0:
-            raise ValueError("Total number of seconds cannot be less than zero.")
+            raise ValueError('Total number of seconds cannot be less than zero.')
 
         self._sleep = sleep
         self.seconds = seconds
@@ -505,12 +505,12 @@ def loop(*, seconds=0, minutes=0, hours=0, count=None, reconnect=True, loop=None
 
     def decorator(func):
         kwargs = {
-            "seconds": seconds,
-            "minutes": minutes,
-            "hours": hours,
-            "count": count,
-            "reconnect": reconnect,
-            "loop": loop,
+            'seconds': seconds,
+            'minutes': minutes,
+            'hours': hours,
+            'count': count,
+            'reconnect': reconnect,
+            'loop': loop,
         }
         return Loop(func, **kwargs)
 

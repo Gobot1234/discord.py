@@ -60,23 +60,23 @@ class WidgetChannel:
         The channel's position
     """
 
-    __slots__ = ("id", "name", "position")
+    __slots__ = ('id', 'name', 'position')
 
     def __init__(self, **kwargs):
-        self.id = kwargs.pop("id")
-        self.name = kwargs.pop("name")
-        self.position = kwargs.pop("position")
+        self.id = kwargs.pop('id')
+        self.name = kwargs.pop('name')
+        self.position = kwargs.pop('position')
 
     def __str__(self):
         return self.name
 
     def __repr__(self):
-        return "<WidgetChannel id={0.id} name={0.name!r} position={0.position!r}>".format(self)
+        return '<WidgetChannel id={0.id} name={0.name!r} position={0.position!r}>'.format(self)
 
     @property
     def mention(self):
         """:class:`str`: The string that allows you to mention the channel."""
-        return f"<#{self.id}>"
+        return f'<#{self.id}>'
 
     @property
     def created_at(self):
@@ -134,30 +134,30 @@ class WidgetMember(BaseUser):
     """
 
     __slots__ = (
-        "name",
-        "status",
-        "nick",
-        "avatar",
-        "discriminator",
-        "id",
-        "bot",
-        "activity",
-        "deafened",
-        "suppress",
-        "muted",
-        "connected_channel",
+        'name',
+        'status',
+        'nick',
+        'avatar',
+        'discriminator',
+        'id',
+        'bot',
+        'activity',
+        'deafened',
+        'suppress',
+        'muted',
+        'connected_channel',
     )
 
     def __init__(self, *, state, data, connected_channel=None):
         super().__init__(state=state, data=data)
-        self.nick = data.get("nick")
-        self.status = try_enum(Status, data.get("status"))
-        self.deafened = data.get("deaf", False) or data.get("self_deaf", False)
-        self.muted = data.get("mute", False) or data.get("self_mute", False)
-        self.suppress = data.get("suppress", False)
+        self.nick = data.get('nick')
+        self.status = try_enum(Status, data.get('status'))
+        self.deafened = data.get('deaf', False) or data.get('self_deaf', False)
+        self.muted = data.get('mute', False) or data.get('self_mute', False)
+        self.suppress = data.get('suppress', False)
 
         try:
-            game = data["game"]
+            game = data['game']
         except KeyError:
             self.activity = None
         else:
@@ -209,27 +209,27 @@ class Widget:
 
     """
 
-    __slots__ = ("_state", "channels", "_invite", "id", "members", "name")
+    __slots__ = ('_state', 'channels', '_invite', 'id', 'members', 'name')
 
     def __init__(self, *, state, data):
         self._state = state
-        self._invite = data["instant_invite"]
-        self.name = data["name"]
-        self.id = int(data["id"])
+        self._invite = data['instant_invite']
+        self.name = data['name']
+        self.id = int(data['id'])
 
         self.channels = []
-        for channel in data.get("channels", []):
-            _id = int(channel["id"])
-            self.channels.append(WidgetChannel(id=_id, name=channel["name"], position=channel["position"]))
+        for channel in data.get('channels', []):
+            _id = int(channel['id'])
+            self.channels.append(WidgetChannel(id=_id, name=channel['name'], position=channel['position']))
 
         self.members = []
         channels = {channel.id: channel for channel in self.channels}
-        for member in data.get("members", []):
-            connected_channel = _get_as_snowflake(member, "channel_id")
+        for member in data.get('members', []):
+            connected_channel = _get_as_snowflake(member, 'channel_id')
             if connected_channel in channels:
                 connected_channel = channels[connected_channel]
             elif connected_channel:
-                connected_channel = WidgetChannel(id=connected_channel, name="", position=0)
+                connected_channel = WidgetChannel(id=connected_channel, name='', position=0)
 
             self.members.append(WidgetMember(state=self._state, data=member, connected_channel=connected_channel))
 
@@ -240,7 +240,7 @@ class Widget:
         return self.id == other.id
 
     def __repr__(self):
-        return "<Widget id={0.id} name={0.name!r} invite_url={0.invite_url!r}>".format(self)
+        return '<Widget id={0.id} name={0.name!r} invite_url={0.invite_url!r}>'.format(self)
 
     @property
     def created_at(self):
@@ -250,7 +250,7 @@ class Widget:
     @property
     def json_url(self):
         """:class:`str`: The JSON URL of the widget."""
-        return f"https://discord.com/api/guilds/{self.id}/widget.json"
+        return f'https://discord.com/api/guilds/{self.id}/widget.json'
 
     @property
     def invite_url(self):

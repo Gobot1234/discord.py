@@ -27,22 +27,22 @@ from .errors import UnexpectedQuoteError, InvalidEndOfQuotedStringError, Expecte
 # map from opening quotes to closing quotes
 _quotes = {
     '"': '"',
-    "‘": "’",
-    "‚": "‛",
-    "“": "”",
-    "„": "‟",
-    "⹂": "⹂",
-    "「": "」",
-    "『": "』",
-    "〝": "〞",
-    "﹁": "﹂",
-    "﹃": "﹄",
-    "＂": "＂",
-    "｢": "｣",
-    "«": "»",
-    "‹": "›",
-    "《": "》",
-    "〈": "〉",
+    '‘': '’',
+    '‚': '‛',
+    '“': '”',
+    '„': '‟',
+    '⹂': '⹂',
+    '「': '」',
+    '『': '』',
+    '〝': '〞',
+    '﹁': '﹂',
+    '﹃': '﹄',
+    '＂': '＂',
+    '｢': '｣',
+    '«': '»',
+    '‹': '›',
+    '《': '》',
+    '〈': '〉',
 }
 _all_quotes = set(_quotes.keys()) | set(_quotes.values())
 
@@ -145,11 +145,11 @@ class StringView:
                 if is_quoted:
                     # unexpected EOF
                     raise ExpectedClosingQuoteError(close_quote)
-                return "".join(result)
+                return ''.join(result)
 
             # currently we accept strings in the format of "hello world"
             # to embed a quote inside the string you must escape it: "a \"world\""
-            if current == "\\":
+            if current == '\\':
                 next_char = self.get()
                 if not next_char:
                     # string ends with \ and no character after it
@@ -157,7 +157,7 @@ class StringView:
                         # if we're quoted then we're expecting a closing quote
                         raise ExpectedClosingQuoteError(close_quote)
                     # if we aren't then we just let it through
-                    return "".join(result)
+                    return ''.join(result)
 
                 if next_char in _escaped_quotes:
                     # escaped quote
@@ -180,13 +180,13 @@ class StringView:
                     raise InvalidEndOfQuotedStringError(next_char)
 
                 # we're quoted so it's okay
-                return "".join(result)
+                return ''.join(result)
 
             if current.isspace() and not is_quoted:
                 # end of word found
-                return "".join(result)
+                return ''.join(result)
 
             result.append(current)
 
     def __repr__(self):
-        return "<StringView pos: {0.index} prev: {0.previous} end: {0.end} eof: {0.eof}>".format(self)
+        return '<StringView pos: {0.index} prev: {0.previous} end: {0.end} eof: {0.eof}>'.format(self)

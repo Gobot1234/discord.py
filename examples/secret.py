@@ -3,14 +3,14 @@ import typing
 import discord
 from discord.ext import commands
 
-bot = commands.Bot(command_prefix=commands.when_mentioned, description="Nothing to see here!")
+bot = commands.Bot(command_prefix=commands.when_mentioned, description='Nothing to see here!')
 
 # the `hidden` keyword argument hides it from the help command.
 @bot.group(hidden=True)
 async def secret(ctx: commands.Context):
     """What is this "secret" you speak of?"""
     if ctx.invoked_subcommand is None:
-        await ctx.send("Shh!", delete_after=5)
+        await ctx.send('Shh!', delete_after=5)
 
 
 def create_overwrites(ctx, *objects):
@@ -53,8 +53,8 @@ async def text(ctx: commands.Context, name: str, *objects: typing.Union[discord.
     await ctx.guild.create_text_channel(
         name,
         overwrites=overwrites,
-        topic="Top secret text channel. Any leakage of this channel may result in serious trouble.",
-        reason="Very secret business.",
+        topic='Top secret text channel. Any leakage of this channel may result in serious trouble.',
+        reason='Very secret business.',
     )
 
 
@@ -67,7 +67,7 @@ async def voice(ctx: commands.Context, name: str, *objects: typing.Union[discord
 
     overwrites = create_overwrites(ctx, *objects)
 
-    await ctx.guild.create_voice_channel(name, overwrites=overwrites, reason="Very secret business.")
+    await ctx.guild.create_voice_channel(name, overwrites=overwrites, reason='Very secret business.')
 
 
 @secret.command()
@@ -82,7 +82,7 @@ async def emoji(ctx: commands.Context, emoji: discord.PartialEmoji, *roles: disc
 
     # the key parameter here is `roles`, which controls
     # what roles are able to use the emoji.
-    await ctx.guild.create_custom_emoji(name=emoji.name, image=emoji_bytes, roles=roles, reason="Very secret business.")
+    await ctx.guild.create_custom_emoji(name=emoji.name, image=emoji_bytes, roles=roles, reason='Very secret business.')
 
 
-bot.run("token")
+bot.run('token')

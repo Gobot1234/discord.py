@@ -38,7 +38,7 @@ class OggError(DiscordException):
 
 
 class OggPage:
-    _header = struct.Struct("<xBQIIIB")
+    _header = struct.Struct('<xBQIIIB')
 
     def __init__(self, stream):
         try:
@@ -47,10 +47,10 @@ class OggPage:
             self.flag, self.gran_pos, self.serial, self.pagenum, self.crc, self.segnum = self._header.unpack(header)
 
             self.segtable = stream.read(self.segnum)
-            bodylen = sum(struct.unpack("B" * self.segnum, self.segtable))
+            bodylen = sum(struct.unpack('B' * self.segnum, self.segtable))
             self.data = stream.read(bodylen)
         except Exception:
-            raise OggError("bad data stream") from None
+            raise OggError('bad data stream') from None
 
     def iter_packets(self):
         packetlen = offset = 0
@@ -77,12 +77,12 @@ class OggStream:
 
     def _next_page(self):
         head = self.stream.read(4)
-        if head == b"OggS":
+        if head == b'OggS':
             return OggPage(self.stream)
         elif not head:
             return None
         else:
-            raise OggError("invalid header magic")
+            raise OggError('invalid header magic')
 
     def _iter_pages(self):
         page = self._next_page()
@@ -91,10 +91,10 @@ class OggStream:
             page = self._next_page()
 
     def iter_packets(self):
-        partial = b""
+        partial = b''
         for page in self._iter_pages():
             for data, complete in page.iter_packets():
                 partial += data
                 if complete:
                     yield partial
-                    partial = b""
+                    partial = b''

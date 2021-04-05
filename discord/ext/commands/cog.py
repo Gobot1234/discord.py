@@ -27,8 +27,8 @@ import copy
 from ._types import _BaseCommand
 
 __all__ = (
-    "CogMeta",
-    "Cog",
+    'CogMeta',
+    'Cog',
 )
 
 
@@ -94,17 +94,17 @@ class CogMeta(type):
 
     def __new__(cls, *args, **kwargs):
         name, bases, attrs = args
-        attrs["__cog_name__"] = kwargs.pop("name", name)
-        attrs["__cog_settings__"] = kwargs.pop("command_attrs", {})
+        attrs['__cog_name__'] = kwargs.pop('name', name)
+        attrs['__cog_settings__'] = kwargs.pop('command_attrs', {})
 
-        description = kwargs.pop("description", None)
+        description = kwargs.pop('description', None)
         if description is None:
-            description = inspect.cleandoc(attrs.get("__doc__", ""))
-        attrs["__cog_description__"] = description
+            description = inspect.cleandoc(attrs.get('__doc__', ''))
+        attrs['__cog_description__'] = description
 
         commands = {}
         listeners = {}
-        no_bot_cog = "Commands or listeners must not start with cog_ or bot_ (in method {0.__name__}.{1})"
+        no_bot_cog = 'Commands or listeners must not start with cog_ or bot_ (in method {0.__name__}.{1})'
 
         new_cls = super().__new__(cls, name, bases, attrs, **kwargs)
         for base in reversed(new_cls.__mro__):
@@ -119,17 +119,17 @@ class CogMeta(type):
                     value = value.__func__
                 if isinstance(value, _BaseCommand):
                     if is_static_method:
-                        raise TypeError(f"Command in method {base}.{elem!r} must not be staticmethod.")
-                    if elem.startswith(("cog_", "bot_")):
+                        raise TypeError(f'Command in method {base}.{elem!r} must not be staticmethod.')
+                    if elem.startswith(('cog_', 'bot_')):
                         raise TypeError(no_bot_cog.format(base, elem))
                     commands[elem] = value
                 elif inspect.iscoroutinefunction(value):
                     try:
-                        getattr(value, "__cog_listener__")
+                        getattr(value, '__cog_listener__')
                     except AttributeError:
                         continue
                     else:
-                        if elem.startswith(("cog_", "bot_")):
+                        if elem.startswith(('cog_', 'bot_')):
                             raise TypeError(no_bot_cog.format(base, elem))
                         listeners[elem] = value
 
@@ -252,7 +252,7 @@ class Cog(metaclass=CogMeta):
     @classmethod
     def _get_overridden_method(cls, method):
         """Return None if the method is not overridden. Otherwise returns the overridden method."""
-        return getattr(method.__func__, "__cog_special_method__", method)
+        return getattr(method.__func__, '__cog_special_method__', method)
 
     @classmethod
     def listener(cls, name=None):
@@ -274,14 +274,14 @@ class Cog(metaclass=CogMeta):
         """
 
         if name is not None and not isinstance(name, str):
-            raise TypeError(f"Cog.listener expected str but received {name.__class__.__name__!r} instead.")
+            raise TypeError(f'Cog.listener expected str but received {name.__class__.__name__!r} instead.')
 
         def decorator(func):
             actual = func
             if isinstance(actual, staticmethod):
                 actual = actual.__func__
             if not inspect.iscoroutinefunction(actual):
-                raise TypeError("Listener function must be a coroutine function.")
+                raise TypeError('Listener function must be a coroutine function.')
             actual.__cog_listener__ = True
             to_assign = name or actual.__name__
             try:
@@ -301,7 +301,7 @@ class Cog(metaclass=CogMeta):
 
         .. versionadded:: 1.7
         """
-        return hasattr(self.cog_command_error.__func__, "__cog_special_method__")
+        return hasattr(self.cog_command_error.__func__, '__cog_special_method__')
 
     @_cog_special_method
     def cog_unload(self):

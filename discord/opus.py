@@ -74,23 +74,23 @@ CTL_SET_GAIN = 4034
 CTL_LAST_PACKET_DURATION = 4039
 
 band_ctl = {
-    "narrow": 1101,
-    "medium": 1102,
-    "wide": 1103,
-    "superwide": 1104,
-    "full": 1105,
+    'narrow': 1101,
+    'medium': 1102,
+    'wide': 1103,
+    'superwide': 1104,
+    'full': 1105,
 }
 
 signal_ctl = {
-    "auto": -1000,
-    "voice": 3001,
-    "music": 3002,
+    'auto': -1000,
+    'voice': 3001,
+    'music': 3002,
 }
 
 
 def _err_lt(result, func, args):
     if result < OK:
-        log.info("error has happened in %s", func.__name__)
+        log.info('error has happened in %s', func.__name__)
         raise OpusError(result)
     return result
 
@@ -98,7 +98,7 @@ def _err_lt(result, func, args):
 def _err_ne(result, func, args):
     ret = args[-1]._obj
     if ret.value != OK:
-        log.info("error has happened in %s", func.__name__)
+        log.info('error has happened in %s', func.__name__)
         raise OpusError(ret.value)
     return result
 
@@ -110,43 +110,43 @@ def _err_ne(result, func, args):
 # The fourth is the error handler.
 exported_functions = [
     # Generic
-    ("opus_get_version_string", None, ctypes.c_char_p, None),
-    ("opus_strerror", [ctypes.c_int], ctypes.c_char_p, None),
+    ('opus_get_version_string', None, ctypes.c_char_p, None),
+    ('opus_strerror', [ctypes.c_int], ctypes.c_char_p, None),
     # Encoder functions
-    ("opus_encoder_get_size", [ctypes.c_int], ctypes.c_int, None),
-    ("opus_encoder_create", [ctypes.c_int, ctypes.c_int, ctypes.c_int, c_int_ptr], EncoderStructPtr, _err_ne),
-    ("opus_encode", [EncoderStructPtr, c_int16_ptr, ctypes.c_int, ctypes.c_char_p, ctypes.c_int32], ctypes.c_int32, _err_lt),
+    ('opus_encoder_get_size', [ctypes.c_int], ctypes.c_int, None),
+    ('opus_encoder_create', [ctypes.c_int, ctypes.c_int, ctypes.c_int, c_int_ptr], EncoderStructPtr, _err_ne),
+    ('opus_encode', [EncoderStructPtr, c_int16_ptr, ctypes.c_int, ctypes.c_char_p, ctypes.c_int32], ctypes.c_int32, _err_lt),
     (
-        "opus_encode_float",
+        'opus_encode_float',
         [EncoderStructPtr, c_float_ptr, ctypes.c_int, ctypes.c_char_p, ctypes.c_int32],
         ctypes.c_int32,
         _err_lt,
     ),
-    ("opus_encoder_ctl", None, ctypes.c_int32, _err_lt),
-    ("opus_encoder_destroy", [EncoderStructPtr], None, None),
+    ('opus_encoder_ctl', None, ctypes.c_int32, _err_lt),
+    ('opus_encoder_destroy', [EncoderStructPtr], None, None),
     # Decoder functions
-    ("opus_decoder_get_size", [ctypes.c_int], ctypes.c_int, None),
-    ("opus_decoder_create", [ctypes.c_int, ctypes.c_int, c_int_ptr], DecoderStructPtr, _err_ne),
+    ('opus_decoder_get_size', [ctypes.c_int], ctypes.c_int, None),
+    ('opus_decoder_create', [ctypes.c_int, ctypes.c_int, c_int_ptr], DecoderStructPtr, _err_ne),
     (
-        "opus_decode",
+        'opus_decode',
         [DecoderStructPtr, ctypes.c_char_p, ctypes.c_int32, c_int16_ptr, ctypes.c_int, ctypes.c_int],
         ctypes.c_int,
         _err_lt,
     ),
     (
-        "opus_decode_float",
+        'opus_decode_float',
         [DecoderStructPtr, ctypes.c_char_p, ctypes.c_int32, c_float_ptr, ctypes.c_int, ctypes.c_int],
         ctypes.c_int,
         _err_lt,
     ),
-    ("opus_decoder_ctl", None, ctypes.c_int32, _err_lt),
-    ("opus_decoder_destroy", [DecoderStructPtr], None, None),
-    ("opus_decoder_get_nb_samples", [DecoderStructPtr, ctypes.c_char_p, ctypes.c_int32], ctypes.c_int, _err_lt),
+    ('opus_decoder_ctl', None, ctypes.c_int32, _err_lt),
+    ('opus_decoder_destroy', [DecoderStructPtr], None, None),
+    ('opus_decoder_get_nb_samples', [DecoderStructPtr, ctypes.c_char_p, ctypes.c_int32], ctypes.c_int, _err_lt),
     # Packet functions
-    ("opus_packet_get_bandwidth", [ctypes.c_char_p], ctypes.c_int, _err_lt),
-    ("opus_packet_get_nb_channels", [ctypes.c_char_p], ctypes.c_int, _err_lt),
-    ("opus_packet_get_nb_frames", [ctypes.c_char_p, ctypes.c_int], ctypes.c_int, _err_lt),
-    ("opus_packet_get_samples_per_frame", [ctypes.c_char_p, ctypes.c_int], ctypes.c_int, _err_lt),
+    ('opus_packet_get_bandwidth', [ctypes.c_char_p], ctypes.c_int, _err_lt),
+    ('opus_packet_get_nb_channels', [ctypes.c_char_p], ctypes.c_int, _err_lt),
+    ('opus_packet_get_nb_frames', [ctypes.c_char_p, ctypes.c_int], ctypes.c_int, _err_lt),
+    ('opus_packet_get_samples_per_frame', [ctypes.c_char_p, ctypes.c_int], ctypes.c_int, _err_lt),
 ]
 
 
@@ -170,7 +170,7 @@ def libopus_loader(name):
             if item[3]:
                 func.errcheck = item[3]
         except KeyError:
-            log.exception("Error assigning check function to %s", func)
+            log.exception('Error assigning check function to %s', func)
 
     return lib
 
@@ -178,14 +178,14 @@ def libopus_loader(name):
 def _load_default():
     global _lib
     try:
-        if sys.platform == "win32":
+        if sys.platform == 'win32':
             _basedir = os.path.dirname(os.path.abspath(__file__))
-            _bitness = struct.calcsize("P") * 8
-            _target = "x64" if _bitness > 32 else "x86"
-            _filename = os.path.join(_basedir, "bin", f"libopus-0.{_target}.dll")
+            _bitness = struct.calcsize('P') * 8
+            _target = 'x64' if _bitness > 32 else 'x86'
+            _filename = os.path.join(_basedir, 'bin', f'libopus-0.{_target}.dll')
             _lib = libopus_loader(_filename)
         else:
-            _lib = libopus_loader(ctypes.util.find_library("opus"))
+            _lib = libopus_loader(ctypes.util.find_library('opus'))
     except Exception:
         _lib = None
 
@@ -257,7 +257,7 @@ class OpusError(DiscordException):
 
     def __init__(self, code):
         self.code = code
-        msg = _lib.opus_strerror(self.code).decode("utf-8")
+        msg = _lib.opus_strerror(self.code).decode('utf-8')
         log.info('"%s" has happened', msg)
         super().__init__(msg)
 
@@ -272,7 +272,7 @@ class _OpusStruct:
     SAMPLING_RATE = 48000
     CHANNELS = 2
     FRAME_LENGTH = 20  # in milliseconds
-    SAMPLE_SIZE = struct.calcsize("h") * CHANNELS
+    SAMPLE_SIZE = struct.calcsize('h') * CHANNELS
     SAMPLES_PER_FRAME = int(SAMPLING_RATE / 1000 * FRAME_LENGTH)
 
     FRAME_SIZE = SAMPLES_PER_FRAME * SAMPLE_SIZE
@@ -282,7 +282,7 @@ class _OpusStruct:
         if not is_loaded() and not _load_default():
             raise OpusNotLoaded()
 
-        return _lib.opus_get_version_string().decode("utf-8")
+        return _lib.opus_get_version_string().decode('utf-8')
 
 
 class Encoder(_OpusStruct):
@@ -294,11 +294,11 @@ class Encoder(_OpusStruct):
         self.set_bitrate(128)
         self.set_fec(True)
         self.set_expected_packet_loss_percent(0.15)
-        self.set_bandwidth("full")
-        self.set_signal_type("auto")
+        self.set_bandwidth('full')
+        self.set_signal_type('auto')
 
     def __del__(self):
-        if hasattr(self, "_state"):
+        if hasattr(self, '_state'):
             _lib.opus_encoder_destroy(self._state)
             self._state = None
 
@@ -339,7 +339,7 @@ class Encoder(_OpusStruct):
 
         ret = _lib.opus_encode(self._state, pcm, frame_size, data, max_data_bytes)
 
-        return array.array("b", data[:ret]).tobytes()
+        return array.array('b', data[:ret]).tobytes()
 
 
 class Decoder(_OpusStruct):
@@ -349,7 +349,7 @@ class Decoder(_OpusStruct):
         self._state = self._create_state()
 
     def __del__(self):
-        if hasattr(self, "_state"):
+        if hasattr(self, '_state'):
             _lib.opus_decoder_destroy(self._state)
             self._state = None
 
@@ -403,7 +403,7 @@ class Decoder(_OpusStruct):
 
     def decode(self, data, *, fec=False):
         if data is None and fec:
-            raise OpusError("Invalid arguments: FEC cannot be used with null data")
+            raise OpusError('Invalid arguments: FEC cannot be used with null data')
 
         if data is None:
             frame_size = self._get_last_packet_duration() or self.SAMPLES_PER_FRAME
@@ -419,4 +419,4 @@ class Decoder(_OpusStruct):
 
         ret = _lib.opus_decode(self._state, data, len(data) if data else 0, pcm_ptr, frame_size, fec)
 
-        return array.array("h", pcm[: ret * channel_count]).tobytes()
+        return array.array('h', pcm[: ret * channel_count]).tobytes()

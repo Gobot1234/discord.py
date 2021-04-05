@@ -78,18 +78,18 @@ class Context(discord.abc.Messageable):
     """
 
     def __init__(self, **attrs):
-        self.message = attrs.pop("message", None)
-        self.bot = attrs.pop("bot", None)
-        self.args = attrs.pop("args", [])
-        self.kwargs = attrs.pop("kwargs", {})
-        self.prefix = attrs.pop("prefix")
-        self.command = attrs.pop("command", None)
-        self.view = attrs.pop("view", None)
-        self.invoked_with = attrs.pop("invoked_with", None)
-        self.invoked_parents = attrs.pop("invoked_parents", [])
-        self.invoked_subcommand = attrs.pop("invoked_subcommand", None)
-        self.subcommand_passed = attrs.pop("subcommand_passed", None)
-        self.command_failed = attrs.pop("command_failed", False)
+        self.message = attrs.pop('message', None)
+        self.bot = attrs.pop('bot', None)
+        self.args = attrs.pop('args', [])
+        self.kwargs = attrs.pop('kwargs', {})
+        self.prefix = attrs.pop('prefix')
+        self.command = attrs.pop('command', None)
+        self.view = attrs.pop('view', None)
+        self.invoked_with = attrs.pop('invoked_with', None)
+        self.invoked_parents = attrs.pop('invoked_parents', [])
+        self.invoked_subcommand = attrs.pop('invoked_subcommand', None)
+        self.subcommand_passed = attrs.pop('subcommand_passed', None)
+        self.command_failed = attrs.pop('command_failed', False)
         self._state = self.message._state
 
     async def invoke(self, command, /, *args, **kwargs):
@@ -166,7 +166,7 @@ class Context(discord.abc.Messageable):
         cmd = self.command
         view = self.view
         if cmd is None:
-            raise ValueError("This context is not valid.")
+            raise ValueError('This context is not valid.')
 
         # some state to revert to when we're done
         index, previous = view.index, view.previous
@@ -310,7 +310,7 @@ class Context(discord.abc.Messageable):
         await cmd.prepare_help_command(self, entity.qualified_name)
 
         try:
-            if hasattr(entity, "__cog_commands__"):
+            if hasattr(entity, '__cog_commands__'):
                 injected = wrap_callback(cmd.send_cog_help)
                 return await injected(entity)
             elif isinstance(entity, Group):

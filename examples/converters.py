@@ -8,7 +8,7 @@ from discord.ext import commands
 intents = discord.Intents.default()
 intents.members = True
 
-bot = commands.Bot("!", intents=intents)
+bot = commands.Bot('!', intents=intents)
 
 
 @bot.command()
@@ -29,7 +29,7 @@ async def userinfo(ctx: commands.Context, user: discord.User):
     user_id = user.id
     username = user.name
     avatar = user.avatar_url
-    await ctx.send(f"User found: {user_id} -- {username}\n{avatar}")
+    await ctx.send(f'User found: {user_id} -- {username}\n{avatar}')
 
 
 @userinfo.error
@@ -82,7 +82,7 @@ async def notify(ctx: commands.Context, target: ChannelOrMemberConverter):
     # the `argument` parameter of the `ChannelOrMemberConverter.convert` method and
     # the conversion will go through the process defined there.
 
-    await target.send(f"Hello, {target.name}!")
+    await target.send(f'Hello, {target.name}!')
 
 
 @bot.command()
@@ -97,9 +97,9 @@ async def ignore(ctx: commands.Context, target: typing.Union[discord.Member, dis
 
     # To check the resulting type, `isinstance` is used
     if isinstance(target, discord.Member):
-        await ctx.send(f"Member found: {target.mention}, adding them to the ignore list.")
+        await ctx.send(f'Member found: {target.mention}, adding them to the ignore list.')
     elif isinstance(target, discord.TextChannel):  # this could be an `else` but for completeness' sake.
-        await ctx.send(f"Channel found: {target.mention}, adding it to the ignore list.")
+        await ctx.send(f'Channel found: {target.mention}, adding it to the ignore list.')
 
 
 # Built-in type converters.
@@ -114,4 +114,4 @@ async def multiply(ctx: commands.Context, number: int, maybe: bool):
     await ctx.send(number * 5)
 
 
-bot.run("token")
+bot.run('token')

@@ -49,7 +49,7 @@ if TYPE_CHECKING:
 
 class _Undefined:
     def __repr__(self):
-        return "see-below"
+        return 'see-below'
 
 
 _undefined = _Undefined()
@@ -145,20 +145,20 @@ class PrivateChannel(Snowflake, Protocol):
 
 
 class _Overwrites:
-    __slots__ = ("id", "allow", "deny", "type")
+    __slots__ = ('id', 'allow', 'deny', 'type')
 
     def __init__(self, **kwargs):
-        self.id = kwargs.pop("id")
-        self.allow = int(kwargs.pop("allow_new", 0))
-        self.deny = int(kwargs.pop("deny_new", 0))
-        self.type = sys.intern(kwargs.pop("type"))
+        self.id = kwargs.pop('id')
+        self.allow = int(kwargs.pop('allow_new', 0))
+        self.deny = int(kwargs.pop('deny_new', 0))
+        self.type = sys.intern(kwargs.pop('type'))
 
     def _asdict(self):
         return {
-            "id": self.id,
-            "allow": str(self.allow),
-            "deny": str(self.deny),
-            "type": self.type,
+            'id': self.id,
+            'allow': str(self.allow),
+            'deny': str(self.deny),
+            'type': self.type,
         }
 
 
@@ -200,7 +200,7 @@ class GuildChannel(Protocol):
 
     async def _move(self, position, parent_id=None, lock_permissions=False, *, reason):
         if position < 0:
-            raise InvalidArgument("Channel position cannot be less than 0.")
+            raise InvalidArgument('Channel position cannot be less than 0.')
 
         http = self._state.http
         bucket = self._sorting_bucket
@@ -221,7 +221,7 @@ class GuildChannel(Protocol):
 
         payload = []
         for index, c in enumerate(channels):
-            d = {"id": c.id, "position": index}
+            d = {'id': c.id, 'position': index}
             if parent_id is not _undefined and c.id == self.id:
                 d.update(parent_id=parent_id, lock_permissions=lock_permissions)
             payload.append(d)
@@ -233,68 +233,68 @@ class GuildChannel(Protocol):
 
     async def _edit(self, options, reason):
         try:
-            parent = options.pop("category")
+            parent = options.pop('category')
         except KeyError:
             parent_id = _undefined
         else:
             parent_id = parent and parent.id
 
         try:
-            options["rate_limit_per_user"] = options.pop("slowmode_delay")
+            options['rate_limit_per_user'] = options.pop('slowmode_delay')
         except KeyError:
             pass
 
         try:
-            rtc_region = options.pop("rtc_region")
+            rtc_region = options.pop('rtc_region')
         except KeyError:
             pass
         else:
-            options["rtc_region"] = None if rtc_region is None else str(rtc_region)
+            options['rtc_region'] = None if rtc_region is None else str(rtc_region)
 
-        lock_permissions = options.pop("sync_permissions", False)
+        lock_permissions = options.pop('sync_permissions', False)
 
         try:
-            position = options.pop("position")
+            position = options.pop('position')
         except KeyError:
             if parent_id is not _undefined:
                 if lock_permissions:
                     category = self.guild.get_channel(parent_id)
-                    options["permission_overwrites"] = [c._asdict() for c in category._overwrites]
-                options["parent_id"] = parent_id
+                    options['permission_overwrites'] = [c._asdict() for c in category._overwrites]
+                options['parent_id'] = parent_id
             elif lock_permissions and self.category_id is not None:
                 # if we're syncing permissions on a pre-existing channel category without changing it
                 # we need to update the permissions to point to the pre-existing category
                 category = self.guild.get_channel(self.category_id)
-                options["permission_overwrites"] = [c._asdict() for c in category._overwrites]
+                options['permission_overwrites'] = [c._asdict() for c in category._overwrites]
         else:
             await self._move(position, parent_id=parent_id, lock_permissions=lock_permissions, reason=reason)
 
-        overwrites = options.get("overwrites", None)
+        overwrites = options.get('overwrites', None)
         if overwrites is not None:
             perms = []
             for target, perm in overwrites.items():
                 if not isinstance(perm, PermissionOverwrite):
-                    raise InvalidArgument("Expected PermissionOverwrite received {0.__name__}".format(type(perm)))
+                    raise InvalidArgument('Expected PermissionOverwrite received {0.__name__}'.format(type(perm)))
 
                 allow, deny = perm.pair()
-                payload = {"allow": allow.value, "deny": deny.value, "id": target.id}
+                payload = {'allow': allow.value, 'deny': deny.value, 'id': target.id}
 
                 if isinstance(target, Role):
-                    payload["type"] = "role"
+                    payload['type'] = 'role'
                 else:
-                    payload["type"] = "member"
+                    payload['type'] = 'member'
 
                 perms.append(payload)
-            options["permission_overwrites"] = perms
+            options['permission_overwrites'] = perms
 
         try:
-            ch_type = options["type"]
+            ch_type = options['type']
         except KeyError:
             pass
         else:
             if not isinstance(ch_type, ChannelType):
-                raise InvalidArgument("type field must be of type ChannelType")
-            options["type"] = ch_type.value
+                raise InvalidArgument('type field must be of type ChannelType')
+            options['type'] = ch_type.value
 
         if options:
             data = await self._state.http.edit_channel(self.id, reason=reason, **options)
@@ -305,11 +305,11 @@ class GuildChannel(Protocol):
         everyone_index = 0
         everyone_id = self.guild.id
 
-        for index, overridden in enumerate(data.get("permission_overwrites", [])):
-            overridden_id = int(overridden.pop("id"))
+        for index, overridden in enumerate(data.get('permission_overwrites', [])):
+            overridden_id = int(overridden.pop('id'))
             self._overwrites.append(_Overwrites(id=overridden_id, **overridden))
 
-            if overridden["type"] == "member":
+            if overridden['type'] == 'member':
                 continue
 
             if overridden_id == everyone_id:
@@ -331,7 +331,7 @@ class GuildChannel(Protocol):
         their default values in the :attr:`~discord.Guild.roles` attribute."""
         ret = []
         g = self.guild
-        for overwrite in filter(lambda o: o.type == "role", self._overwrites):
+        for overwrite in filter(lambda o: o.type == 'role', self._overwrites):
             role = g.get_role(overwrite.id)
             if role is None:
                 continue
@@ -344,7 +344,7 @@ class GuildChannel(Protocol):
     @property
     def mention(self):
         """:class:`str`: The string that allows you to mention the channel."""
-        return f"<#{self.id}>"
+        return f'<#{self.id}>'
 
     @property
     def created_at(self):
@@ -367,9 +367,9 @@ class GuildChannel(Protocol):
         """
 
         if isinstance(obj, User):
-            predicate = lambda p: p.type == "member"
+            predicate = lambda p: p.type == 'member'
         elif isinstance(obj, Role):
-            predicate = lambda p: p.type == "role"
+            predicate = lambda p: p.type == 'role'
         else:
             predicate = lambda p: True
 
@@ -400,9 +400,9 @@ class GuildChannel(Protocol):
             deny = Permissions(ow.deny)
             overwrite = PermissionOverwrite.from_pair(allow, deny)
 
-            if ow.type == "role":
+            if ow.type == 'role':
                 target = self.guild.get_role(ow.id)
-            elif ow.type == "member":
+            elif ow.type == 'member':
                 target = self.guild.get_member(ow.id)
 
             # TODO: There is potential data loss here in the non-chunked
@@ -504,7 +504,7 @@ class GuildChannel(Protocol):
 
         # Apply channel specific role permission overwrites
         for overwrite in remaining_overwrites:
-            if overwrite.type == "role" and roles.has(overwrite.id):
+            if overwrite.type == 'role' and roles.has(overwrite.id):
                 denies |= overwrite.deny
                 allows |= overwrite.allow
 
@@ -512,7 +512,7 @@ class GuildChannel(Protocol):
 
         # Apply member specific permission overwrites
         for overwrite in remaining_overwrites:
-            if overwrite.type == "member" and overwrite.id == member.id:
+            if overwrite.type == 'member' and overwrite.id == member.id:
                 base.handle_overwrite(allow=overwrite.allow, deny=overwrite.deny)
                 break
 
@@ -623,22 +623,22 @@ class GuildChannel(Protocol):
         http = self._state.http
 
         if isinstance(target, User):
-            perm_type = "member"
+            perm_type = 'member'
         elif isinstance(target, Role):
-            perm_type = "role"
+            perm_type = 'role'
         else:
-            raise InvalidArgument("target parameter must be either Member or Role")
+            raise InvalidArgument('target parameter must be either Member or Role')
 
         if isinstance(overwrite, _Undefined):
             if len(permissions) == 0:
-                raise InvalidArgument("No overwrite provided.")
+                raise InvalidArgument('No overwrite provided.')
             try:
                 overwrite = PermissionOverwrite(**permissions)
             except (ValueError, TypeError):
-                raise InvalidArgument("Invalid permissions given to keyword arguments.")
+                raise InvalidArgument('Invalid permissions given to keyword arguments.')
         else:
             if len(permissions) > 0:
-                raise InvalidArgument("Cannot mix overwrite and keyword arguments.")
+                raise InvalidArgument('Cannot mix overwrite and keyword arguments.')
 
         # TODO: wait for event
 
@@ -648,12 +648,12 @@ class GuildChannel(Protocol):
             (allow, deny) = overwrite.pair()
             await http.edit_channel_permissions(self.id, target.id, allow.value, deny.value, perm_type, reason=reason)
         else:
-            raise InvalidArgument("Invalid overwrite type provided.")
+            raise InvalidArgument('Invalid overwrite type provided.')
 
     async def _clone_impl(self, base_attrs, *, name=None, reason=None):
-        base_attrs["permission_overwrites"] = [x._asdict() for x in self._overwrites]
-        base_attrs["parent_id"] = self.category_id
-        base_attrs["name"] = name or self.name
+        base_attrs['permission_overwrites'] = [x._asdict() for x in self._overwrites]
+        base_attrs['parent_id'] = self.category_id
+        base_attrs['name'] = name or self.name
         guild_id = self.guild.id
         cls = self.__class__
         data = await self._state.http.create_channel(guild_id, self.type.value, reason=reason, **base_attrs)
@@ -758,14 +758,14 @@ class GuildChannel(Protocol):
         if not kwargs:
             return
 
-        beginning, end = kwargs.get("beginning"), kwargs.get("end")
-        before, after = kwargs.get("before"), kwargs.get("after")
-        offset = kwargs.get("offset", 0)
+        beginning, end = kwargs.get('beginning'), kwargs.get('end')
+        before, after = kwargs.get('before'), kwargs.get('after')
+        offset = kwargs.get('offset', 0)
         if sum(bool(a) for a in (beginning, end, before, after)) > 1:
-            raise InvalidArgument("Only one of [before, after, end, beginning] can be used.")
+            raise InvalidArgument('Only one of [before, after, end, beginning] can be used.')
 
         bucket = self._sorting_bucket
-        parent_id = kwargs.get("category", ...)
+        parent_id = kwargs.get('category', ...)
         if parent_id not in (..., None):
             parent_id = parent_id.id
             channels = [ch for ch in self.guild.channels if ch._sorting_bucket == bucket and ch.category_id == parent_id]
@@ -794,14 +794,14 @@ class GuildChannel(Protocol):
             index = next((i + 1 for i, c in enumerate(channels) if c.id == after.id), None)
 
         if index is None:
-            raise InvalidArgument("Could not resolve appropriate move position")
+            raise InvalidArgument('Could not resolve appropriate move position')
 
         channels.insert(max((index + offset), 0), self)
         payload = []
-        lock_permissions = kwargs.get("sync_permissions", False)
-        reason = kwargs.get("reason")
+        lock_permissions = kwargs.get('sync_permissions', False)
+        reason = kwargs.get('reason')
         for index, channel in enumerate(channels):
-            d = {"id": channel.id, "position": index}
+            d = {'id': channel.id, 'position': index}
             if parent_id is not ... and channel.id == self.id:
                 d.update(parent_id=parent_id, lock_permissions=lock_permissions)
             payload.append(d)
@@ -876,8 +876,8 @@ class GuildChannel(Protocol):
         result = []
 
         for invite in data:
-            invite["channel"] = self
-            invite["guild"] = self.guild
+            invite['channel'] = self
+            invite['guild'] = self.guild
             result.append(Invite(state=state, data=invite))
 
         return result
@@ -1013,20 +1013,20 @@ class Messageable(Protocol):
 
         if mention_author is not None:
             allowed_mentions = allowed_mentions or AllowedMentions().to_dict()
-            allowed_mentions["replied_user"] = bool(mention_author)
+            allowed_mentions['replied_user'] = bool(mention_author)
 
         if reference is not None:
             try:
                 reference = reference.to_message_reference_dict()
             except AttributeError:
-                raise InvalidArgument("reference parameter must be Message or MessageReference") from None
+                raise InvalidArgument('reference parameter must be Message or MessageReference') from None
 
         if file is not None and files is not None:
-            raise InvalidArgument("cannot pass both file and files parameter to send()")
+            raise InvalidArgument('cannot pass both file and files parameter to send()')
 
         if file is not None:
             if not isinstance(file, File):
-                raise InvalidArgument("file parameter must be File")
+                raise InvalidArgument('file parameter must be File')
 
             try:
                 data = await state.http.send_files(
@@ -1044,9 +1044,9 @@ class Messageable(Protocol):
 
         elif files is not None:
             if len(files) > 10:
-                raise InvalidArgument("files parameter must be a list of up to 10 elements")
+                raise InvalidArgument('files parameter must be a list of up to 10 elements')
             elif not all(isinstance(file, File) for file in files):
-                raise InvalidArgument("files parameter must be a list of File")
+                raise InvalidArgument('files parameter must be a list of File')
 
             try:
                 data = await state.http.send_files(
@@ -1283,13 +1283,13 @@ class Connectable(Protocol):
         state = self._state
 
         if state._get_voice_client(key_id):
-            raise ClientException("Already connected to a voice channel.")
+            raise ClientException('Already connected to a voice channel.')
 
         client = state._get_client()
         voice = cls(client, self)
 
         if not isinstance(voice, VoiceProtocol):
-            raise TypeError("Type must meet VoiceProtocol abstract base class.")
+            raise TypeError('Type must meet VoiceProtocol abstract base class.')
 
         state._add_voice_client(key_id, voice)
 

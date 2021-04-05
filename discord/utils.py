@@ -45,7 +45,7 @@ MAX_ASYNCIO_SECONDS = 3456000
 class cached_property:
     def __init__(self, function):
         self.function = function
-        self.__doc__ = getattr(function, "__doc__")
+        self.__doc__ = getattr(function, '__doc__')
 
     def __get__(self, instance, owner):
         if instance is None:
@@ -61,7 +61,7 @@ class CachedSlotProperty:
     def __init__(self, name, function):
         self.name = name
         self.function = function
-        self.__doc__ = getattr(function, "__doc__")
+        self.__doc__ = getattr(function, '__doc__')
 
     def __get__(self, instance, owner):
         if instance is None:
@@ -112,7 +112,7 @@ class SequenceProxy(collections.abc.Sequence):
 
 def parse_time(timestamp):
     if timestamp:
-        return datetime.datetime(*map(int, re.split(r"[^\d]", timestamp.replace("+00:00", ""))))
+        return datetime.datetime(*map(int, re.split(r'[^\d]', timestamp.replace('+00:00', ''))))
     return None
 
 
@@ -129,14 +129,14 @@ def deprecated(instead=None):
     def actual_decorator(func):
         @functools.wraps(func)
         def decorated(*args, **kwargs):
-            warnings.simplefilter("always", DeprecationWarning)  # turn off filter
+            warnings.simplefilter('always', DeprecationWarning)  # turn off filter
             if instead:
-                fmt = "{0.__name__} is deprecated, use {1} instead."
+                fmt = '{0.__name__} is deprecated, use {1} instead.'
             else:
-                fmt = "{0.__name__} is deprecated."
+                fmt = '{0.__name__} is deprecated.'
 
             warnings.warn(fmt.format(func, instead), stacklevel=3, category=DeprecationWarning)
-            warnings.simplefilter("default", DeprecationWarning)  # reset filter
+            warnings.simplefilter('default', DeprecationWarning)  # reset filter
             return func(*args, **kwargs)
 
         return decorated
@@ -169,16 +169,16 @@ def oauth_url(client_id, permissions=None, guild=None, redirect_uri=None, scopes
     :class:`str`
         The OAuth2 URL for inviting the bot into guilds.
     """
-    url = f"https://discord.com/oauth2/authorize?client_id={client_id}"
-    url = url + "&scope=" + "+".join(scopes or ("bot",))
+    url = f'https://discord.com/oauth2/authorize?client_id={client_id}'
+    url = url + '&scope=' + '+'.join(scopes or ('bot',))
     if permissions is not None:
-        url = url + "&permissions=" + str(permissions.value)
+        url = url + '&permissions=' + str(permissions.value)
     if guild is not None:
-        url = url + "&guild_id=" + str(guild.id)
+        url = url + '&guild_id=' + str(guild.id)
     if redirect_uri is not None:
         from urllib.parse import urlencode
 
-        url = url + "&response_type=code&" + urlencode({"redirect_uri": redirect_uri})
+        url = url + '&response_type=code&' + urlencode({'redirect_uri': redirect_uri})
     return url
 
 
@@ -292,13 +292,13 @@ def get(iterable, **attrs):
     # Special case the single element call
     if len(attrs) == 1:
         k, v = attrs.popitem()
-        pred = attrget(k.replace("__", "."))
+        pred = attrget(k.replace('__', '.'))
         for elem in iterable:
             if pred(elem) == v:
                 return elem
         return None
 
-    converted = [(attrget(attr.replace("__", ".")), value) for attr, value in attrs.items()]
+    converted = [(attrget(attr.replace('__', '.')), value) for attr, value in attrs.items()]
 
     for elem in iterable:
         if _all(pred(elem) == value for pred, value in converted):
@@ -322,35 +322,35 @@ def _get_as_snowflake(data, key):
 
 
 def _get_mime_type_for_image(data):
-    if data.startswith(b"\x89\x50\x4E\x47\x0D\x0A\x1A\x0A"):
-        return "image/png"
-    elif data[0:3] == b"\xff\xd8\xff" or data[6:10] in (b"JFIF", b"Exif"):
-        return "image/jpeg"
-    elif data.startswith((b"\x47\x49\x46\x38\x37\x61", b"\x47\x49\x46\x38\x39\x61")):
-        return "image/gif"
-    elif data.startswith(b"RIFF") and data[8:12] == b"WEBP":
-        return "image/webp"
+    if data.startswith(b'\x89\x50\x4E\x47\x0D\x0A\x1A\x0A'):
+        return 'image/png'
+    elif data[0:3] == b'\xff\xd8\xff' or data[6:10] in (b'JFIF', b'Exif'):
+        return 'image/jpeg'
+    elif data.startswith((b'\x47\x49\x46\x38\x37\x61', b'\x47\x49\x46\x38\x39\x61')):
+        return 'image/gif'
+    elif data.startswith(b'RIFF') and data[8:12] == b'WEBP':
+        return 'image/webp'
     else:
-        raise InvalidArgument("Unsupported image type given")
+        raise InvalidArgument('Unsupported image type given')
 
 
 def _bytes_to_base64_data(data):
-    fmt = "data:{mime};base64,{data}"
+    fmt = 'data:{mime};base64,{data}'
     mime = _get_mime_type_for_image(data)
-    b64 = b64encode(data).decode("ascii")
+    b64 = b64encode(data).decode('ascii')
     return fmt.format(mime=mime, data=b64)
 
 
 def to_json(obj):
-    return json.dumps(obj, separators=(",", ":"), ensure_ascii=True)
+    return json.dumps(obj, separators=(',', ':'), ensure_ascii=True)
 
 
 def _parse_ratelimit_header(request, *, use_clock=False):
-    reset_after = request.headers.get("X-Ratelimit-Reset-After")
+    reset_after = request.headers.get('X-Ratelimit-Reset-After')
     if use_clock or not reset_after:
         utc = datetime.timezone.utc
         now = datetime.datetime.now(utc)
-        reset = datetime.datetime.fromtimestamp(float(request.headers["X-Ratelimit-Reset"]), utc)
+        reset = datetime.datetime.fromtimestamp(float(request.headers['X-Ratelimit-Reset']), utc)
         return (reset - now).total_seconds()
     else:
         return float(reset_after)
@@ -430,7 +430,7 @@ class SnowflakeList(array.array):
     __slots__ = ()
 
     def __new__(cls, data, *, is_sorted=False):
-        return array.array.__new__(cls, "Q", data if is_sorted else sorted(data))
+        return array.array.__new__(cls, 'Q', data if is_sorted else sorted(data))
 
     def add(self, element):
         i = bisect_left(self, element)
@@ -445,7 +445,7 @@ class SnowflakeList(array.array):
         return i != len(self) and self[i] == element
 
 
-_IS_ASCII = re.compile(r"^[\x00-\x7f]+$")
+_IS_ASCII = re.compile(r'^[\x00-\x7f]+$')
 
 
 def _string_width(string, *, _IS_ASCII=_IS_ASCII):
@@ -454,7 +454,7 @@ def _string_width(string, *, _IS_ASCII=_IS_ASCII):
     if match:
         return match.endpos
 
-    UNICODE_WIDE_CHAR_TYPE = "WFA"
+    UNICODE_WIDE_CHAR_TYPE = 'WFA'
     func = unicodedata.east_asian_width
     return sum(2 if func(char) in UNICODE_WIDE_CHAR_TYPE else 1 for char in string)
 
@@ -478,7 +478,7 @@ def resolve_invite(invite):
     if isinstance(invite, Invite):
         return invite.code
     else:
-        rx = r"(?:https?\:\/\/)?discord(?:\.gg|(?:app)?\.com\/invite)\/(.+)"
+        rx = r'(?:https?\:\/\/)?discord(?:\.gg|(?:app)?\.com\/invite)\/(.+)'
         m = re.match(rx, invite)
         if m:
             return m.group(1)
@@ -506,22 +506,22 @@ def resolve_template(code):
     if isinstance(code, Template):
         return code.code
     else:
-        rx = r"(?:https?\:\/\/)?discord(?:\.new|(?:app)?\.com\/template)\/(.+)"
+        rx = r'(?:https?\:\/\/)?discord(?:\.new|(?:app)?\.com\/template)\/(.+)'
         m = re.match(rx, code)
         if m:
             return m.group(1)
     return code
 
 
-_MARKDOWN_ESCAPE_SUBREGEX = "|".join(r"\{0}(?=([\s\S]*((?<!\{0})\{0})))".format(c) for c in ("*", "`", "_", "~", "|"))
+_MARKDOWN_ESCAPE_SUBREGEX = '|'.join(r'\{0}(?=([\s\S]*((?<!\{0})\{0})))'.format(c) for c in ('*', '`', '_', '~', '|'))
 
-_MARKDOWN_ESCAPE_COMMON = r"^>(?:>>)?\s|\[.+\]\(.+\)"
+_MARKDOWN_ESCAPE_COMMON = r'^>(?:>>)?\s|\[.+\]\(.+\)'
 
-_MARKDOWN_ESCAPE_REGEX = re.compile(fr"(?P<markdown>{_MARKDOWN_ESCAPE_SUBREGEX}|{_MARKDOWN_ESCAPE_COMMON})", re.MULTILINE)
+_MARKDOWN_ESCAPE_REGEX = re.compile(fr'(?P<markdown>{_MARKDOWN_ESCAPE_SUBREGEX}|{_MARKDOWN_ESCAPE_COMMON})', re.MULTILINE)
 
-_URL_REGEX = r"(?P<url><[^: >]+:\/[^ >]+>|(?:https?|steam):\/\/[^\s<]+[^<.,:;\"\'\]\s])"
+_URL_REGEX = r'(?P<url><[^: >]+:\/[^ >]+>|(?:https?|steam):\/\/[^\s<]+[^<.,:;\"\'\]\s])'
 
-_MARKDOWN_STOCK_REGEX = fr"(?P<markdown>[_\\~|\*`]|{_MARKDOWN_ESCAPE_COMMON})"
+_MARKDOWN_STOCK_REGEX = fr'(?P<markdown>[_\\~|\*`]|{_MARKDOWN_ESCAPE_COMMON})'
 
 
 def remove_markdown(text, *, ignore_links=True):
@@ -550,11 +550,11 @@ def remove_markdown(text, *, ignore_links=True):
 
     def replacement(match):
         groupdict = match.groupdict()
-        return groupdict.get("url", "")
+        return groupdict.get('url', '')
 
     regex = _MARKDOWN_STOCK_REGEX
     if ignore_links:
-        regex = f"(?:{_URL_REGEX}|{regex})"
+        regex = f'(?:{_URL_REGEX}|{regex})'
     return re.sub(regex, replacement, text, 0, re.MULTILINE)
 
 
@@ -587,18 +587,18 @@ def escape_markdown(text, *, as_needed=False, ignore_links=True):
 
         def replacement(match):
             groupdict = match.groupdict()
-            is_url = groupdict.get("url")
+            is_url = groupdict.get('url')
             if is_url:
                 return is_url
-            return "\\" + groupdict["markdown"]
+            return '\\' + groupdict['markdown']
 
         regex = _MARKDOWN_STOCK_REGEX
         if ignore_links:
-            regex = f"(?:{_URL_REGEX}|{regex})"
+            regex = f'(?:{_URL_REGEX}|{regex})'
         return re.sub(regex, replacement, text, 0, re.MULTILINE)
     else:
-        text = re.sub(r"\\", r"\\\\", text)
-        return _MARKDOWN_ESCAPE_REGEX.sub(r"\\\1", text)
+        text = re.sub(r'\\', r'\\\\', text)
+        return _MARKDOWN_ESCAPE_REGEX.sub(r'\\\1', text)
 
 
 def escape_mentions(text):
@@ -624,4 +624,4 @@ def escape_mentions(text):
     :class:`str`
         The text with the mentions removed.
     """
-    return re.sub(r"@(everyone|here|[!&]?[0-9]{17,20})", "@\u200b\\1", text)
+    return re.sub(r'@(everyone|here|[!&]?[0-9]{17,20})', '@\u200b\\1', text)

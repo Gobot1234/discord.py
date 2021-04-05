@@ -10,10 +10,10 @@ class MyClient(discord.Client):
         self.bg_task = self.loop.create_task(self.my_background_task())
 
     async def on_ready(self):
-        print("Logged in as")
+        print('Logged in as')
         print(self.user.name)
         print(self.user.id)
-        print("------")
+        print('------')
 
     async def my_background_task(self):
         await self.wait_until_ready()
@@ -26,4 +26,4 @@ class MyClient(discord.Client):
 
 
 client = MyClient()
-client.run("token")
+client.run('token')
