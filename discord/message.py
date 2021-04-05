@@ -31,7 +31,7 @@ from . import utils
 from .reaction import Reaction
 from .emoji import Emoji
 from .partial_emoji import PartialEmoji
-from .enums import MessageType, ChannelType, try_enum
+from .enums import MessageType, ChannelType
 from .errors import InvalidArgument, ClientException, HTTPException
 from .embeds import Embed
 from .member import Member
@@ -542,7 +542,7 @@ class Message(Hashable):
         self.activity = data.get('activity')
         self.channel = channel
         self._edited_timestamp = utils.parse_time(data['edited_timestamp'])
-        self.type = try_enum(MessageType, data['type'])
+        self.type = MessageType.try_value(data['type'])
         self.pinned = data['pinned']
         self.flags = MessageFlags._from_value(data.get('flags', 0))
         self.mention_everyone = data['mention_everyone']
@@ -680,7 +680,7 @@ class Message(Hashable):
         self.tts = value
 
     def _handle_type(self, value):
-        self.type = try_enum(MessageType, value)
+        self.type = MessageType.try_value(value)
 
     def _handle_content(self, value):
         self.content = value

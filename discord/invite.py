@@ -26,7 +26,7 @@ from .asset import Asset
 from .utils import parse_time, snowflake_time, _get_as_snowflake
 from .object import Object
 from .mixins import Hashable
-from .enums import ChannelType, VerificationLevel, try_enum
+from .enums import ChannelType, VerificationLevel
 
 class PartialInviteChannel:
     """Represents a "partial" invite channel.
@@ -140,7 +140,7 @@ class PartialInviteGuild:
         self.icon = data.get('icon')
         self.banner = data.get('banner')
         self.splash = data.get('splash')
-        self.verification_level = try_enum(VerificationLevel, data.get('verification_level'))
+        self.verification_level = VerificationLevel.try_value(data.get('verification_level'))
         self.description = data.get('description')
 
     def __str__(self):
@@ -326,7 +326,7 @@ class Invite(Hashable):
         # So this should never raise.
         channel_data = data['channel']
         channel_id = int(channel_data['id'])
-        channel_type = try_enum(ChannelType, channel_data['type'])
+        channel_type = ChannelType.try_value(channel_data['type'])
         channel = PartialInviteChannel(id=channel_id, name=channel_data['name'], type=channel_type)
         if guild is not None and not isinstance(guild, PartialInviteGuild):
             # Upgrade the partial data if applicable

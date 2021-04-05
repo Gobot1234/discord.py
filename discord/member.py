@@ -35,7 +35,7 @@ from .errors import ClientException
 from .user import BaseUser, User
 from .activity import create_activity
 from .permissions import Permissions
-from .enums import Status, try_enum
+from .enums import Status
 from .colour import Colour
 from .object import Object
 
@@ -336,7 +336,7 @@ class Member(discord.abc.Messageable, _BaseUser):
     @property
     def status(self):
         """:class:`Status`: The member's overall status. If the value is unknown, then it will be a :class:`str` instead."""
-        return try_enum(Status, self._client_status[None])
+        return Status.try_value(self._client_status[None])
 
     @property
     def raw_status(self):
@@ -354,17 +354,17 @@ class Member(discord.abc.Messageable, _BaseUser):
     @property
     def mobile_status(self):
         """:class:`Status`: The member's status on a mobile device, if applicable."""
-        return try_enum(Status, self._client_status.get('mobile', 'offline'))
+        return Status.try_value(self._client_status.get('mobile', 'offline'))
 
     @property
     def desktop_status(self):
         """:class:`Status`: The member's status on the desktop client, if applicable."""
-        return try_enum(Status, self._client_status.get('desktop', 'offline'))
+        return Status.try_value(self._client_status.get('desktop', 'offline'))
 
     @property
     def web_status(self):
         """:class:`Status`: The member's status on the web client, if applicable."""
-        return try_enum(Status, self._client_status.get('web', 'offline'))
+        return Status.try_value(self._client_status.get('web', 'offline'))
 
     def is_on_mobile(self):
         """:class:`bool`: A helper function that determines if a member is active on a mobile device."""

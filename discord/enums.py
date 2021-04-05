@@ -60,7 +60,6 @@ class EnumMeta(type):
     def __new__(cls, name, bases, attrs):
         value_mapping = {}
         member_mapping = {}
-        member_names = []
 
         value_cls = _create_value_cls(name)
         for key, value in list(attrs.items()):
@@ -77,31 +76,27 @@ class EnumMeta(type):
                 del attrs[key]
                 continue
 
-            try:
-                new_value = value_mapping[value]
-            except KeyError:
+            if (new_value := value_mapping.get(value)) is None:
                 new_value = value_cls(name=key, value=value)
                 value_mapping[value] = new_value
-                member_names.append(key)
 
             member_mapping[key] = new_value
             attrs[key] = new_value
 
         attrs['_enum_value_map_'] = value_mapping
         attrs['_enum_member_map_'] = member_mapping
-        attrs['_enum_member_names_'] = member_names
         actual_cls = super().__new__(cls, name, bases, attrs)
         value_cls._actual_enum_cls_ = actual_cls
         return actual_cls
 
     def __iter__(cls):
-        return (cls._enum_member_map_[name] for name in cls._enum_member_names_)
+        yield from cls._enum_member_map_.values()
 
     def __reversed__(cls):
-        return (cls._enum_member_map_[name] for name in reversed(cls._enum_member_names_))
+        yield from reversed(cls._enum_member_map_.values())
 
     def __len__(cls):
-        return len(cls._enum_member_names_)
+        return len(cls._enum_member_map_)
 
     def __repr__(cls):
         return f'<enum {cls.__name__}>'
@@ -417,14 +412,3 @@ class StickerType(Enum):
     png = 1
     apng = 2
     lottie = 3
-
-def try_enum(cls, val):
-    """A function that tries to turn the value into enum ``cls``.
-
-    If it fails it returns the value instead.
-    """
-
-    try:
-        return cls._enum_value_map_[val]
-    except (KeyError, TypeError, AttributeError):
-        return val

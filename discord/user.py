@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.
 import discord.abc
 from .flags import PublicUserFlags
 from .utils import snowflake_time, _bytes_to_base64_data
-from .enums import DefaultAvatar, try_enum
+from .enums import DefaultAvatar
 from .colour import Colour
 from .asset import Asset
 
@@ -142,7 +142,7 @@ class BaseUser(_BaseUser):
     @property
     def default_avatar(self):
         """:class:`DefaultAvatar`: Returns the default avatar for a given user. This is calculated by the user's discriminator."""
-        return try_enum(DefaultAvatar, int(self.discriminator) % len(DefaultAvatar))
+        return DefaultAvatar.try_value(int(self.discriminator) % len(DefaultAvatar))
 
     @property
     def default_avatar_url(self):

@@ -26,7 +26,7 @@ import datetime
 from .utils import _get_as_snowflake, get, parse_time
 from .user import User
 from .errors import InvalidArgument
-from .enums import try_enum, ExpireBehaviour
+from .enums import ExpireBehaviour
 
 class IntegrationAccount:
     """Represents an integration account.
@@ -107,7 +107,7 @@ class Integration:
         self._role_id = _get_as_snowflake(integ, 'role_id')
         self.role = get(self.guild.roles, id=self._role_id)
         self.enable_emoticons = integ.get('enable_emoticons')
-        self.expire_behaviour = try_enum(ExpireBehaviour, integ['expire_behavior'])
+        self.expire_behaviour = ExpireBehaviour.try_value(integ['expire_behavior'])
         self.expire_behavior = self.expire_behaviour
         self.expire_grace_period = integ['expire_grace_period']
         self.synced_at = parse_time(integ['synced_at'])

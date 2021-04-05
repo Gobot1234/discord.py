@@ -26,7 +26,7 @@ from .utils import snowflake_time, _get_as_snowflake, resolve_invite
 from .user import BaseUser
 from .activity import create_activity
 from .invite import Invite
-from .enums import Status, try_enum
+from .enums import Status
 
 class WidgetChannel:
     """Represents a "partial" widget channel.
@@ -137,7 +137,7 @@ class WidgetMember(BaseUser):
     def __init__(self, *, state, data, connected_channel=None):
         super().__init__(state=state, data=data)
         self.nick = data.get('nick')
-        self.status = try_enum(Status, data.get('status'))
+        self.status = Status.try_value(data.get('status'))
         self.deafened = data.get('deaf', False) or data.get('self_deaf', False)
         self.muted = data.get('mute', False) or data.get('self_mute', False)
         self.suppress = data.get('suppress', False)

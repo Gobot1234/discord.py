@@ -46,7 +46,7 @@ from .channel import *
 from .raw_models import *
 from .member import Member
 from .role import Role
-from .enums import ChannelType, try_enum, Status
+from .enums import ChannelType, Status
 from . import utils
 from .flags import Intents, MemberCacheFlags
 from .object import Object
@@ -636,7 +636,7 @@ class ConnectionState:
                 self.dispatch('private_channel_delete', channel)
 
     def parse_channel_update(self, data):
-        channel_type = try_enum(ChannelType, data.get('type'))
+        channel_type = ChannelType.try_value(data.get('type'))
         channel_id = int(data['id'])
         if channel_type is ChannelType.group:
             channel = self._get_private_channel(channel_id)

@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.
 from .mixins import Hashable
 from .asset import Asset
 from .utils import snowflake_time
-from .enums import StickerType, try_enum
+from .enums import StickerType
 
 class Sticker(Hashable):
     """Represents a sticker
@@ -73,7 +73,7 @@ class Sticker(Hashable):
         self.name = data['name']
         self.description = data['description']
         self.pack_id = int(data['pack_id'])
-        self.format = try_enum(StickerType, data['format_type'])
+        self.format = StickerType.try_value(data['format_type'])
         self.image = data['asset']
 
         try:

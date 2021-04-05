@@ -34,7 +34,7 @@ from .permissions import PermissionOverwrite
 from .colour import Colour
 from .errors import InvalidArgument, ClientException
 from .channel import *
-from .enums import VoiceRegion, ChannelType, try_enum, VerificationLevel, ContentFilter, NotificationLevel
+from .enums import VoiceRegion, ChannelType, VerificationLevel, ContentFilter, NotificationLevel
 from .mixins import Hashable
 from .user import User
 from .invite import Invite
@@ -274,10 +274,10 @@ class Guild(Hashable):
             self._member_count = member_count
 
         self.name = guild.get('name')
-        self.region = try_enum(VoiceRegion, guild.get('region'))
-        self.verification_level = try_enum(VerificationLevel, guild.get('verification_level'))
-        self.default_notifications = try_enum(NotificationLevel, guild.get('default_message_notifications'))
-        self.explicit_content_filter = try_enum(ContentFilter, guild.get('explicit_content_filter', 0))
+        self.region = VoiceRegion.try_value(guild.get('region'))
+        self.verification_level = VerificationLevel.try_value(guild.get('verification_level'))
+        self.default_notifications = NotificationLevel.try_value(guild.get('default_message_notifications'))
+        self.explicit_content_filter = ContentFilter.try_value(guild.get('explicit_content_filter', 0))
         self.afk_timeout = guild.get('afk_timeout')
         self.icon = guild.get('icon')
         self.banner = guild.get('banner')

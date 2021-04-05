@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.
 import datetime
 
 from .asset import Asset
-from .enums import ActivityType, try_enum
+from .enums import ActivityType
 from .colour import Colour
 from .partial_emoji import PartialEmoji
 from .utils import _get_as_snowflake
@@ -185,7 +185,7 @@ class Activity(BaseActivity):
         self.flags = kwargs.pop('flags', 0)
         self.sync_id = kwargs.pop('sync_id', None)
         self.session_id = kwargs.pop('session_id', None)
-        self.type = try_enum(ActivityType, kwargs.pop('type', -1))
+        self.type = ActivityType.try_value(kwargs.pop('type', -1))
         emoji = kwargs.pop('emoji', None)
         if emoji is not None:
             self.emoji = PartialEmoji.from_dict(emoji)
@@ -742,7 +742,7 @@ def create_activity(data):
     if not data:
         return None
 
-    game_type = try_enum(ActivityType, data.get('type', -1))
+    game_type = ActivityType.try_value(data.get('type', -1))
     if game_type is ActivityType.playing:
         if 'application_id' in data or 'session_id' in data:
             return Activity(**data)

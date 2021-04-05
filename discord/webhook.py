@@ -34,7 +34,7 @@ import aiohttp
 from . import utils
 from .errors import InvalidArgument, HTTPException, Forbidden, NotFound, DiscordServerError
 from .message import Message
-from .enums import try_enum, WebhookType
+from .enums import WebhookType
 from .user import BaseUser, User
 from .asset import Asset
 from .mixins import Hashable
@@ -598,7 +598,7 @@ class Webhook(Hashable):
 
     def __init__(self, data, *, adapter, state=None):
         self.id = int(data['id'])
-        self.type = try_enum(WebhookType, int(data['type']))
+        self.type = WebhookType.try_value(int(data['type']))
         self.channel_id = utils._get_as_snowflake(data, 'channel_id')
         self.guild_id = utils._get_as_snowflake(data, 'guild_id')
         self.name = data.get('name')

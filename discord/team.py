@@ -25,7 +25,7 @@ DEALINGS IN THE SOFTWARE.
 from . import utils
 from .user import BaseUser
 from .asset import Asset
-from .enums import TeamMembershipState, try_enum
+from .enums import TeamMembershipState
 
 __all__ = (
     'Team',
@@ -149,7 +149,7 @@ class TeamMember(BaseUser):
 
     def __init__(self, team, state, data):
         self.team = team
-        self.membership_state = try_enum(TeamMembershipState, data['membership_state'])
+        self.membership_state = TeamMembershipState.try_value(data['membership_state'])
         self.permissions = data['permissions']
         super().__init__(state=state, data=data['user'])
 

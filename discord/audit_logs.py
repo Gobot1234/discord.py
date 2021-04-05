@@ -30,13 +30,13 @@ from .invite import Invite
 from .mixins import Hashable
 
 def _transform_verification_level(entry, data):
-    return enums.try_enum(enums.VerificationLevel, data)
+    return enums.VerificationLevel.try_value(data)
 
 def _transform_default_notifications(entry, data):
-    return enums.try_enum(enums.NotificationLevel, data)
+    return enums.NotificationLevel.try_value(data)
 
 def _transform_explicit_content_filter(entry, data):
-    return enums.try_enum(enums.ContentFilter, data)
+    return enums.ContentFilter.try_value(data)
 
 def _transform_permissions(entry, data):
     return Permissions(data)
@@ -235,7 +235,7 @@ class AuditLogEntry(Hashable):
         self._from_data(data)
 
     def _from_data(self, data):
-        self.action = enums.try_enum(enums.AuditLogAction, data['action_type'])
+        self.action = enums.AuditLogAction.try_value(data['action_type'])
         self.id = int(data['id'])
 
         # this key is technically not usually present
