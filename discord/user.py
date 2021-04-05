@@ -31,15 +31,16 @@ from .asset import Asset
 
 _BaseUser = discord.abc.User
 
+
 class BaseUser(_BaseUser):
-    __slots__ = ('name', 'id', 'discriminator', 'avatar', 'bot', 'system', '_public_flags', '_state')
+    __slots__ = ("name", "id", "discriminator", "avatar", "bot", "system", "_public_flags", "_state")
 
     def __init__(self, *, state, data):
         self._state = state
         self._update(data)
 
     def __str__(self):
-        return '{0.name}#{0.discriminator}'.format(self)
+        return "{0.name}#{0.discriminator}".format(self)
 
     def __eq__(self, other):
         return isinstance(other, _BaseUser) and other.id == self.id
@@ -51,17 +52,17 @@ class BaseUser(_BaseUser):
         return self.id >> 22
 
     def _update(self, data):
-        self.name = data['username']
-        self.id = int(data['id'])
-        self.discriminator = data['discriminator']
-        self.avatar = data['avatar']
-        self._public_flags = data.get('public_flags', 0)
-        self.bot = data.get('bot', False)
-        self.system = data.get('system', False)
+        self.name = data["username"]
+        self.id = int(data["id"])
+        self.discriminator = data["discriminator"]
+        self.avatar = data["avatar"]
+        self._public_flags = data.get("public_flags", 0)
+        self.bot = data.get("bot", False)
+        self.system = data.get("system", False)
 
     @classmethod
     def _copy(cls, user):
-        self = cls.__new__(cls) # bypass __init__
+        self = cls.__new__(cls)  # bypass __init__
 
         self.name = user.name
         self.id = user.id
@@ -75,11 +76,11 @@ class BaseUser(_BaseUser):
 
     def _to_minimal_user_json(self):
         return {
-            'username': self.name,
-            'id': self.id,
-            'avatar': self.avatar,
-            'discriminator': self.discriminator,
-            'bot': self.bot,
+            "username": self.name,
+            "id": self.id,
+            "avatar": self.avatar,
+            "discriminator": self.discriminator,
+            "bot": self.bot,
         }
 
     @property
@@ -101,9 +102,9 @@ class BaseUser(_BaseUser):
 
     def is_avatar_animated(self):
         """:class:`bool`: Indicates if the user has an animated avatar."""
-        return bool(self.avatar and self.avatar.startswith('a_'))
+        return bool(self.avatar and self.avatar.startswith("a_"))
 
-    def avatar_url_as(self, *, format=None, static_format='webp', size=1024):
+    def avatar_url_as(self, *, format=None, static_format="webp", size=1024):
         """Returns an :class:`Asset` for the avatar the user has.
 
         If the user does not have a traditional avatar, an asset for
@@ -147,7 +148,7 @@ class BaseUser(_BaseUser):
     @property
     def default_avatar_url(self):
         """:class:`Asset`: Returns a URL for a user's default avatar."""
-        return Asset(self._state, f'/embed/avatars/{self.default_avatar.value}.png')
+        return Asset(self._state, f"/embed/avatars/{self.default_avatar.value}.png")
 
     @property
     def colour(self):
@@ -170,7 +171,7 @@ class BaseUser(_BaseUser):
     @property
     def mention(self):
         """:class:`str`: Returns a string that allows you to mention the given user."""
-        return f'<@{self.id}>'
+        return f"<@{self.id}>"
 
     def permissions_in(self, channel):
         """An alias for :meth:`abc.GuildChannel.permissions_for`.
@@ -224,6 +225,7 @@ class BaseUser(_BaseUser):
 
         return any(user.id == self.id for user in message.mentions)
 
+
 class ClientUser(BaseUser):
     """Represents your Discord user.
 
@@ -269,24 +271,25 @@ class ClientUser(BaseUser):
     mfa_enabled: :class:`bool`
         Specifies if the user has MFA turned on and working.
     """
-    __slots__ = BaseUser.__slots__ + \
-                ('locale', '_flags', 'verified', 'mfa_enabled', '__weakref__')
+
+    __slots__ = BaseUser.__slots__ + ("locale", "_flags", "verified", "mfa_enabled", "__weakref__")
 
     def __init__(self, *, state, data):
         super().__init__(state=state, data=data)
 
     def __repr__(self):
-        return '<ClientUser id={0.id} name={0.name!r} discriminator={0.discriminator!r}' \
-               ' bot={0.bot} verified={0.verified} mfa_enabled={0.mfa_enabled}>'.format(self)
+        return (
+            "<ClientUser id={0.id} name={0.name!r} discriminator={0.discriminator!r}"
+            " bot={0.bot} verified={0.verified} mfa_enabled={0.mfa_enabled}>".format(self)
+        )
 
     def _update(self, data):
         super()._update(data)
         # There's actually an Optional[str] phone field as well but I won't use it
-        self.verified = data.get('verified', False)
-        self.locale = data.get('locale')
-        self._flags = data.get('flags', 0)
-        self.mfa_enabled = data.get('mfa_enabled', False)
-
+        self.verified = data.get("verified", False)
+        self.locale = data.get("locale")
+        self._flags = data.get("flags", 0)
+        self.mfa_enabled = data.get("mfa_enabled", False)
 
     async def edit(self, *, username=None, avatar=None):
         """|coro|
@@ -323,6 +326,7 @@ class ClientUser(BaseUser):
 
         data = await self._state.http.edit_profile(username=username, avatar=avatar)
         self._update(data)
+
 
 class User(BaseUser, discord.abc.Messageable):
     """Represents a Discord user.
@@ -361,10 +365,10 @@ class User(BaseUser, discord.abc.Messageable):
         Specifies if the user is a system user (i.e. represents Discord officially).
     """
 
-    __slots__ = BaseUser.__slots__ + ('__weakref__',)
+    __slots__ = BaseUser.__slots__ + ("__weakref__",)
 
     def __repr__(self):
-        return '<User id={0.id} name={0.name!r} discriminator={0.discriminator!r} bot={0.bot}>'.format(self)
+        return "<User id={0.id} name={0.name!r} discriminator={0.discriminator!r} bot={0.bot}>".format(self)
 
     async def _get_channel(self):
         ch = await self.create_dm()

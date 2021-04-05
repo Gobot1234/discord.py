@@ -26,35 +26,38 @@ import types
 from collections import namedtuple
 
 __all__ = (
-    'Enum',
-    'ChannelType',
-    'MessageType',
-    'VoiceRegion',
-    'SpeakingState',
-    'VerificationLevel',
-    'ContentFilter',
-    'Status',
-    'DefaultAvatar',
-    'AuditLogAction',
-    'AuditLogActionCategory',
-    'UserFlags',
-    'ActivityType',
-    'NotificationLevel',
-    'TeamMembershipState',
-    'WebhookType',
-    'ExpireBehaviour',
-    'ExpireBehavior',
-    'StickerType',
+    "Enum",
+    "ChannelType",
+    "MessageType",
+    "VoiceRegion",
+    "SpeakingState",
+    "VerificationLevel",
+    "ContentFilter",
+    "Status",
+    "DefaultAvatar",
+    "AuditLogAction",
+    "AuditLogActionCategory",
+    "UserFlags",
+    "ActivityType",
+    "NotificationLevel",
+    "TeamMembershipState",
+    "WebhookType",
+    "ExpireBehaviour",
+    "ExpireBehavior",
+    "StickerType",
 )
 
+
 def _create_value_cls(name):
-    cls = namedtuple('_EnumValue_' + name, 'name value')
-    cls.__repr__ = lambda self: f'<{name}.{self.name}: {self.value!r}>'
-    cls.__str__ = lambda self: f'{name}.{self.name}'
+    cls = namedtuple("_EnumValue_" + name, "name value")
+    cls.__repr__ = lambda self: f"<{name}.{self.name}: {self.value!r}>"
+    cls.__str__ = lambda self: f"{name}.{self.name}"
     return cls
 
+
 def _is_descriptor(obj):
-    return hasattr(obj, '__get__') or hasattr(obj, '__set__') or hasattr(obj, '__delete__')
+    return hasattr(obj, "__get__") or hasattr(obj, "__set__") or hasattr(obj, "__delete__")
+
 
 class EnumMeta(type):
     def __new__(cls, name, bases, attrs):
@@ -65,7 +68,7 @@ class EnumMeta(type):
         value_cls = _create_value_cls(name)
         for key, value in list(attrs.items()):
             is_descriptor = _is_descriptor(value)
-            if key[0] == '_' and not is_descriptor:
+            if key[0] == "_" and not is_descriptor:
                 continue
 
             # Special case classmethod to just pass through
@@ -87,9 +90,9 @@ class EnumMeta(type):
             member_mapping[key] = new_value
             attrs[key] = new_value
 
-        attrs['_enum_value_map_'] = value_mapping
-        attrs['_enum_member_map_'] = member_mapping
-        attrs['_enum_member_names_'] = member_names
+        attrs["_enum_value_map_"] = value_mapping
+        attrs["_enum_member_map_"] = member_mapping
+        attrs["_enum_member_names_"] = member_names
         actual_cls = super().__new__(cls, name, bases, attrs)
         value_cls._actual_enum_cls_ = actual_cls
         return actual_cls
@@ -104,7 +107,7 @@ class EnumMeta(type):
         return len(cls._enum_member_names_)
 
     def __repr__(cls):
-        return f'<enum {cls.__name__}>'
+        return f"<enum {cls.__name__}>"
 
     @property
     def __members__(cls):
@@ -120,10 +123,10 @@ class EnumMeta(type):
         return cls._enum_member_map_[key]
 
     def __setattr__(cls, name, value):
-        raise TypeError('Enums are immutable.')
+        raise TypeError("Enums are immutable.")
 
     def __delattr__(cls, attr):
-        raise TypeError('Enums are immutable')
+        raise TypeError("Enums are immutable")
 
     def __instancecheck__(self, instance):
         # isinstance(x, Y)
@@ -132,6 +135,7 @@ class EnumMeta(type):
             return instance._actual_enum_cls_ is self
         except AttributeError:
             return False
+
 
 class Enum(metaclass=EnumMeta):
     @classmethod
@@ -142,6 +146,7 @@ class Enum(metaclass=EnumMeta):
             return value
 
 
+# fmt: off
 class ChannelType(Enum):
     text     = 0
     private  = 1
@@ -154,6 +159,7 @@ class ChannelType(Enum):
 
     def __str__(self):
         return self.name
+
 
 class MessageType(Enum):
     default                                      = 0
@@ -174,6 +180,7 @@ class MessageType(Enum):
     guild_discovery_requalified                  = 15
     guild_discovery_grace_period_initial_warning = 16
     guild_discovery_grace_period_final_warning   = 17
+
 
 class VoiceRegion(Enum):
     us_west       = 'us-west'
@@ -203,6 +210,7 @@ class VoiceRegion(Enum):
     def __str__(self):
         return self.value
 
+
 class SpeakingState(Enum):
     none       = 0
     voice      = 1
@@ -214,6 +222,7 @@ class SpeakingState(Enum):
 
     def __int__(self):
         return self.value
+
 
 class VerificationLevel(Enum):
     none              = 0
@@ -228,6 +237,7 @@ class VerificationLevel(Enum):
     def __str__(self):
         return self.name
 
+
 class ContentFilter(Enum):
     disabled    = 0
     no_role     = 1
@@ -236,16 +246,18 @@ class ContentFilter(Enum):
     def __str__(self):
         return self.name
 
+
 class Status(Enum):
-    online = 'online'
-    offline = 'offline'
-    idle = 'idle'
-    dnd = 'dnd'
-    do_not_disturb = 'dnd'
-    invisible = 'invisible'
+    online         = "online"
+    offline        = "offline"
+    idle           = "idle"
+    dnd            = "dnd"
+    do_not_disturb = "dnd"
+    invisible      = "invisible"
 
     def __str__(self):
         return self.value
+
 
 class DefaultAvatar(Enum):
     blurple = 0
@@ -258,14 +270,17 @@ class DefaultAvatar(Enum):
     def __str__(self):
         return self.name
 
+
 class NotificationLevel(Enum):
     all_messages  = 0
     only_mentions = 1
+
 
 class AuditLogActionCategory(Enum):
     create = 1
     delete = 2
     update = 3
+
 
 class AuditLogAction(Enum):
     guild_update             = 1
@@ -349,74 +364,83 @@ class AuditLogAction(Enum):
     def target_type(self):
         v = self.value
         if v == -1:
-            return 'all'
+            return "all"
         elif v < 10:
-            return 'guild'
+            return "guild"
         elif v < 20:
-            return 'channel'
+            return "channel"
         elif v < 30:
-            return 'user'
+            return "user"
         elif v < 40:
-            return 'role'
+            return "role"
         elif v < 50:
-            return 'invite'
+            return "invite"
         elif v < 60:
-            return 'webhook'
+            return "webhook"
         elif v < 70:
-            return 'emoji'
+            return "emoji"
         elif v < 80:
-            return 'message'
+            return "message"
         elif v < 90:
-            return 'integration'
+            return "integration"
+
 
 class UserFlags(Enum):
-    staff = 1
-    partner = 2
-    hypesquad = 4
-    bug_hunter = 8
-    mfa_sms = 16
-    premium_promo_dismissed = 32
-    hypesquad_bravery = 64
-    hypesquad_brilliance = 128
-    hypesquad_balance = 256
-    early_supporter = 512
-    team_user = 1024
-    system = 4096
+    staff                      = 1
+    partner                    = 2
+    hypesquad                  = 4
+    bug_hunter                 = 8
+    mfa_sms                    = 16
+    premium_promo_dismissed    = 32
+    hypesquad_bravery          = 64
+    hypesquad_brilliance       = 128
+    hypesquad_balance          = 256
+    early_supporter            = 512
+    team_user                  = 1024
+    system                     = 4096
     has_unread_urgent_messages = 8192
-    bug_hunter_level_2 = 16384
-    verified_bot = 65536
-    verified_bot_developer = 131072
+    bug_hunter_level_2         = 16384
+    verified_bot               = 65536
+    verified_bot_developer     = 131072
+
 
 class ActivityType(Enum):
-    unknown = -1
-    playing = 0
+    unknown   = -1
+    playing   = 0
     streaming = 1
     listening = 2
-    watching = 3
-    custom = 4
+    watching  = 3
+    custom    = 4
     competing = 5
 
     def __int__(self):
         return self.value
 
+
 class TeamMembershipState(Enum):
-    invited = 1
+    invited  = 1
     accepted = 2
 
+
 class WebhookType(Enum):
-    incoming = 1
+    incoming         = 1
     channel_follower = 2
+
 
 class ExpireBehaviour(Enum):
     remove_role = 0
-    kick = 1
+    kick        = 1
+
 
 ExpireBehavior = ExpireBehaviour
 
+
 class StickerType(Enum):
-    png = 1
-    apng = 2
+    png    = 1
+    apng   = 2
     lottie = 3
+# fmt: on
+
 
 def try_enum(cls, val):
     """A function that tries to turn the value into enum ``cls``.
